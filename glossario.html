@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossário de Inteligência Artificial</title>
+<style>
+  :root{
+    --marinho:#0F2F4F;
+    --petroleo:#2C7A7B;
+    --petroleo-escuro:#215B5C;
+    --cinza:#5B6770;
+    --claro:#EEF2F5;
+    --borda:#D8E0E6;
+    --branco:#FFFFFF;
+    --realce:#FFF1B8;
+    --raio:10px;
+    --sombra:0 1px 2px rgba(15,47,79,.06), 0 2px 8px rgba(15,47,79,.05);
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--branco);
+    color:#22303A;
+    font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-text-size-adjust:100%;
+  }
+
+  .app{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    min-height:520px;
+    background:var(--branco);
+  }
+
+  .wrap{
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    padding:0 18px;
+  }
+
+  /* ---------- Cabecalho fixo ---------- */
+  .topo{
+    flex:0 0 auto;
+    background:var(--branco);
+    border-bottom:1px solid var(--borda);
+    padding:16px 0 10px;
+  }
+  .topo h1{
+    margin:0;
+    color:var(--marinho);
+    font-size:1.5rem;
+    line-height:1.25;
+    letter-spacing:-.01em;
+  }
+  .sub{
+    margin:4px 0 12px;
+    color:var(--cinza);
+    font-size:.94rem;
+  }
+
+  .controles{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:flex-end;
+  }
+  .busca{flex:1 1 260px; min-width:0;}
+  .busca > label{
+    display:block;
+    font-size:.78rem;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--cinza);
+    margin-bottom:4px;
+  }
+  .campo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--claro);
+    border:1px solid var(--borda);
+    border-radius:var(--raio);
+    padding:0 8px 0 10px;
+  }
+  .campo:focus-within{
+    border-color:var(--petroleo);
+    box-shadow:0 0 0 3px rgba(44,122,123,.18);
+  }
+  .campo svg{flex:0 0 auto; color:var(--cinza);}
+  #busca{
+    flex:1 1 auto;
+    min-width:0;
+    border:0;
+    background:transparent;
+    padding:10px 0;
+    font:inherit;
+    font-size:1rem;
+    color:#22303A;
+  }
+  #busca:focus{outline:none;}
+  #busca::-webkit-search-cancel-button,
+  #busca::-webkit-search-decoration{ -webkit-appearance:none; appearance:none; }
+  #limpar{
+    flex:0 0 auto;
+    border:0;
+    background:transparent;
+    color:var(--cinza);
+    font-size:1.2rem;
+    line-height:1;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    cursor:pointer;
+  }
+  #limpar:hover{background:#DFE7EC; color:var(--marinho);}
+
+  .modos{
+    display:inline-flex;
+    background:var(--claro);
+    border:1px solid var(--borda);
+    border-radius:var(--raio);
+    padding:3px;
+    gap:3px;
+  }
+  .modos button{
+    border:0;
+    background:transparent;
+    font:inherit;
+    font-size:.9rem;
+    color:var(--cinza);
+    padding:7px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .modos button[aria-pressed="true"]{
+    background:var(--branco);
+    color:var(--marinho);
+    font-weight:600;
+    box-shadow:var(--sombra);
+  }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:12px;
+  }
+  .chip{
+    border:1px solid var(--borda);
+    background:var(--branco);
+    color:var(--cinza);
+    font:inherit;
+    font-size:.84rem;
+    line-height:1.2;
+    padding:6px 11px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .chip:hover{border-color:var(--petroleo); color:var(--petroleo);}
+  .chip[aria-pressed="true"]{
+    background:var(--petroleo);
+    border-color:var(--petroleo);
+    color:var(--branco);
+    font-weight:600;
+  }
+
+  .barra-status{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+  }
+  #contador{
+    margin:0;
+    font-size:.85rem;
+    color:var(--cinza);
+  }
+  #contador b{color:var(--marinho);}
+  .link-botao{
+    border:0;
+    background:transparent;
+    font:inherit;
+    font-size:.85rem;
+    color:var(--petroleo);
+    text-decoration:underline;
+    cursor:pointer;
+    padding:2px 4px;
+    border-radius:6px;
+  }
+  .link-botao:hover{color:var(--petroleo-escuro);}
+
+  /* ---------- Area de rolagem ---------- */
+  .scroller{
+    flex:1 1 auto;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    position:relative;
+    background:var(--branco);
+  }
+
+  .indice{
+    position:sticky;
+    top:0;
+    z-index:5;
+    background:rgba(255,255,255,.97);
+    border-bottom:1px solid var(--borda);
+  }
+  .indice-inner{
+    display:flex;
+    flex-wrap:wrap;
+    gap:2px;
+    padding:7px 18px;
+    max-width:900px;
+    margin:0 auto;
+  }
+  .letra{
+    border:0;
+    background:transparent;
+    font:inherit;
+    font-size:.82rem;
+    font-weight:700;
+    color:var(--petroleo);
+    min-width:23px;
+    height:23px;
+    padding:0 2px;
+    border-radius:5px;
+    cursor:pointer;
+  }
+  .letra:hover:not(:disabled){background:var(--claro);}
+  .letra:disabled{color:#B7C2CA; cursor:default;}
+
+  .conteudo{padding-top:18px; padding-bottom:26px;}
+
+  .legenda{
+    background:var(--claro);
+    border:1px solid var(--borda);
+    border-radius:var(--raio);
+    padding:14px 16px;
+    margin:0 0 22px;
+  }
+  .legenda h2{
+    margin:0 0 8px;
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--marinho);
+  }
+  .legenda p{margin:0 0 8px; font-size:.88rem; color:var(--cinza);}
+  .legenda ul{
+    list-style:none;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:0 0 10px;
+    padding:0;
+  }
+  .legenda .nota{margin:0; font-size:.86rem;}
+  .legenda .nota b{color:var(--marinho);}
+
+  .grupo{margin:0 0 26px;}
+  .cab-grupo{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 0 12px;
+    padding-bottom:6px;
+    border-bottom:2px solid var(--petroleo);
+  }
+  .cab-grupo h2{
+    margin:0;
+    color:var(--marinho);
+    font-size:1.15rem;
+    letter-spacing:.01em;
+  }
+  .grupo-az .cab-grupo h2{
+    font-size:1.35rem;
+    color:var(--petroleo);
+  }
+  .cab-grupo .qtd{
+    font-size:.78rem;
+    color:var(--cinza);
+  }
+
+  .verbete{
+    border:1px solid var(--borda);
+    border-radius:var(--raio);
+    padding:14px 16px;
+    margin:0 0 10px;
+    background:var(--branco);
+    box-shadow:var(--sombra);
+    scroll-margin-top:60px;
+    transition:background-color .45s ease, border-color .45s ease;
+  }
+  .verbete:focus{outline:none;}
+  .verbete.destacado{
+    background:#FFFBE6;
+    border-color:#E6C64D;
+  }
+  .cab-verbete{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .cab-verbete h3{margin:0; font-size:1.05rem; line-height:1.3;}
+  .titulo{
+    color:var(--marinho);
+    font-weight:700;
+    text-decoration:none;
+  }
+  .titulo:hover{text-decoration:underline; text-underline-offset:3px;}
+  .titulo .ancora{
+    color:var(--petroleo);
+    font-weight:700;
+    margin-left:5px;
+    opacity:0;
+    font-size:.9em;
+  }
+  .verbete:hover .titulo .ancora,
+  .titulo:focus .ancora{opacity:1;}
+
+  .selo{
+    display:inline-block;
+    font-size:.72rem;
+    font-weight:600;
+    line-height:1.2;
+    padding:4px 9px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .cat-conceitos-e-fundamentos{background:#E5EEF9; color:#1F4E86;}
+  .cat-uso-e-prompts{background:#E3F3EC; color:#1B6B47;}
+  .cat-ferramentas{background:#EAF0F0; color:#24686A;}
+  .cat-riscos-e-limites{background:#FBEAEA; color:#9A2C2C;}
+  .cat-dados-e-conformidade{background:#F3E7EF; color:#7A2E5A;}
+  .cat-termos-tecnicos{background:#EFEAF7; color:#4B3B8F;}
+
+  .def{margin:0; font-size:1rem; color:#22303A;}
+
+  .ver{
+    margin:10px 0 0;
+    padding-top:9px;
+    border-top:1px dashed var(--borda);
+    font-size:.9rem;
+    color:var(--cinza);
+  }
+  .ver .rot{
+    font-weight:600;
+    color:var(--marinho);
+    margin-right:4px;
+  }
+  .ver a{
+    color:var(--petroleo);
+    text-decoration:none;
+    border-bottom:1px solid rgba(44,122,123,.35);
+  }
+  .ver a:hover{color:var(--petroleo-escuro); border-bottom-color:var(--petroleo-escuro);}
+  .ver .sem-link{color:var(--cinza);}
+
+  mark{
+    background:var(--realce);
+    color:inherit;
+    padding:0 1px;
+    border-radius:3px;
+  }
+
+  .vazio{
+    text-align:center;
+    padding:44px 18px;
+    border:1px dashed var(--borda);
+    border-radius:var(--raio);
+    background:var(--claro);
+  }
+  .vazio h2{margin:0 0 6px; color:var(--marinho); font-size:1.1rem;}
+  .vazio p{margin:0 0 12px; color:var(--cinza); font-size:.92rem;}
+  .botao{
+    border:1px solid var(--petroleo);
+    background:var(--petroleo);
+    color:var(--branco);
+    font:inherit;
+    font-size:.9rem;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:var(--raio);
+    cursor:pointer;
+  }
+  .botao:hover{background:var(--petroleo-escuro); border-color:var(--petroleo-escuro);}
+
+  .rodape{
+    margin-top:8px;
+    padding-top:16px;
+    border-top:1px solid var(--borda);
+    font-size:.82rem;
+    color:var(--cinza);
+  }
+  .rodape p{margin:0 0 3px;}
+  .rodape .inst{font-weight:600; color:var(--marinho);}
+
+  /* ---------- Voltar ao topo ---------- */
+  .topo-anchor{
+    position:sticky;
+    bottom:16px;
+    height:0;
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-end;
+    padding-right:18px;
+    pointer-events:none;
+    z-index:6;
+  }
+  #voltarTopo{
+    pointer-events:auto;
+    border:1px solid var(--borda);
+    background:var(--branco);
+    color:var(--marinho);
+    font:inherit;
+    font-size:.84rem;
+    font-weight:600;
+    padding:8px 13px;
+    border-radius:999px;
+    box-shadow:0 2px 10px rgba(15,47,79,.18);
+    cursor:pointer;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(6px);
+    transition:opacity .2s ease, transform .2s ease, visibility .2s;
+  }
+  #voltarTopo.visivel{opacity:1; visibility:visible; transform:translateY(0);}
+  #voltarTopo:hover{border-color:var(--petroleo); color:var(--petroleo);}
+
+  /* ---------- Foco visivel ---------- */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible{
+    outline:3px solid var(--petroleo);
+    outline-offset:2px;
+    border-radius:4px;
+  }
+
+  @media (max-width:640px){
+    .topo{padding-top:12px;}
+    .topo h1{font-size:1.25rem;}
+    .sub{font-size:.88rem; margin-bottom:10px;}
+    .wrap{padding:0 14px;}
+    .indice-inner{padding:6px 14px;}
+    .chip{font-size:.8rem; padding:5px 9px;}
+    .verbete{padding:12px 13px;}
+    .cab-verbete h3{font-size:1rem;}
+    .modos{width:100%;}
+    .modos button{flex:1 1 0; text-align:center;}
+    .topo-anchor{padding-right:14px;}
+  }
+
+  /* Em telas estreitas o cabecalho fica compacto para sobrar area de leitura */
+  @media (max-width:480px){
+    .topo{padding:10px 0 8px;}
+    .topo h1{font-size:1.12rem;}
+    .sub{display:none;}
+    .busca > label{
+      position:absolute;
+      width:1px;height:1px;
+      margin:-1px;padding:0;border:0;
+      clip:rect(0 0 0 0);
+      clip-path:inset(50%);
+      overflow:hidden;
+      white-space:nowrap;
+    }
+    #busca{padding:9px 0; font-size:.95rem;}
+    .controles{gap:8px;}
+    .chips{
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      scrollbar-width:none;
+      margin-top:5px;
+      /* espaco para o anel de foco nao ser cortado pela rolagem horizontal */
+      padding:5px 0;
+    }
+    .chips::-webkit-scrollbar{display:none;}
+    .chip{flex:0 0 auto;}
+    .barra-status{margin-top:7px;}
+    .conteudo{padding-top:14px;}
+    .legenda{padding:12px 13px; margin-bottom:18px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topo">
+    <div class="wrap">
+      <h1>Glossário de Inteligência Artificial</h1>
+      <p class="sub">Termos essenciais para entender e usar IA com segurança no dia a dia do Ministério Público.</p>
+
+      <div class="controles">
+        <div class="busca">
+          <label for="busca">Buscar no glossário</label>
+          <div class="campo">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false">
+              <circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+            </svg>
+            <input id="busca" type="search" placeholder="Buscar termo ou definição..." autocomplete="off" spellcheck="false">
+            <button id="limpar" type="button" aria-label="Limpar busca" hidden>&#215;</button>
+          </div>
+        </div>
+
+        <div class="modos" role="group" aria-label="Modo de exibição">
+          <button type="button" id="modoAZ" data-modo="az" aria-pressed="true">A a Z</button>
+          <button type="button" id="modoCat" data-modo="cat" aria-pressed="false">Por categoria</button>
+        </div>
+      </div>
+
+      <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria temática"></div>
+
+      <div class="barra-status">
+        <p id="contador" role="status" aria-live="polite"></p>
+        <button type="button" class="link-botao" id="limparFiltros" hidden>Limpar filtros</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="scroller" id="scroller">
+    <nav class="indice" aria-label="Índice alfabético">
+      <div class="indice-inner" id="indice"></div>
+    </nav>
+
+    <div class="wrap conteudo">
+      <section class="legenda" aria-label="Legenda">
+        <h2>Como usar</h2>
+        <p>Cada verbete traz um selo com a sua categoria temática:</p>
+        <ul id="legendaCats"></ul>
+        <p class="nota"><b>Ver também:</b> lista os termos relacionados. Clique em um deles para ir direto ao verbete correspondente.</p>
+      </section>
+
+      <div id="lista"></div>
+
+      <footer class="rodape">
+        <p class="inst">Curso de Capacitação em IA, Escola Superior do MPPR</p>
+        <p>As ferramentas de IA mudam com frequência; confira sempre a fonte oficial.</p>
+      </footer>
+    </div>
+
+    <div class="topo-anchor">
+      <button type="button" id="voltarTopo">&#8593; Voltar ao topo</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= Dados ================= */
+  var DADOS = [
+  {
+    "id": "agente-de-ia",
+    "termo": "Agente de IA",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Ferramenta de inteligência artificial capaz de executar uma tarefa em várias etapas de forma mais autônoma, e não apenas responder a uma pergunta. Exemplo: reunir informações de vários documentos e, ao final, gerar um relatório.",
+    "verTambem": ["Assistente virtual", "Gems"]
+  },
+  {
+    "id": "ajuste-fino-fine-tuning",
+    "termo": "Ajuste fino (fine-tuning)",
+    "categoria": "Termos técnicos",
+    "definicao": "Processo de treinar um modelo já pronto com dados adicionais e específicos, para especializá-lo em um assunto ou tarefa. No MPPR, o uso de dados de processos para esse fim tem regras próprias conforme o grau de sigilo.",
+    "verTambem": ["Modelo de IA"]
+  },
+  {
+    "id": "alucinacao",
+    "termo": "Alucinação",
+    "categoria": "Riscos e limites",
+    "definicao": "Quando a ferramenta de IA gera uma informação falsa ou inexistente e a apresenta como verdadeira, de forma convincente. Pode inventar uma lei, um número, uma jurisprudência ou uma citação. É a principal razão pela qual toda resposta deve ser conferida em fonte oficial antes de qualquer uso.",
+    "verTambem": ["Verificação de fatos (fact-checking)"]
+  },
+  {
+    "id": "anonimizacao",
+    "termo": "Anonimização",
+    "categoria": "Dados e conformidade",
+    "definicao": "Processo de remover de um documento os dados que permitem identificar uma pessoa, de forma definitiva, sem possibilidade de reverter. Difere da pseudonimização, em que a reidentificação ainda é possível.",
+    "verTambem": ["Pseudonimização", "LGPD"]
+  },
+  {
+    "id": "api",
+    "termo": "API",
+    "categoria": "Termos técnicos",
+    "definicao": "Sigla, em inglês, para interface de programação. É a \"ponte\" que permite que um programa converse e troque informações com outro. Na prática, é o que possibilita integrar a inteligência artificial a outros sistemas.",
+    "verTambem": ["Plugin (extensão)"]
+  },
+  {
+    "id": "apps-script",
+    "termo": "Apps Script",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de programação simples do Google que permite automatizar tarefas dentro do Google Workspace, como planilhas, documentos e e-mails.",
+    "verTambem": ["Automação"]
+  },
+  {
+    "id": "aprendizado-de-maquina-machine-learning",
+    "termo": "Aprendizado de máquina (machine learning)",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Método pelo qual um programa \"aprende\" padrões a partir de exemplos, em vez de seguir regras escritas manualmente por uma pessoa. É a base da inteligência artificial atual.",
+    "verTambem": ["Aprendizado profundo (deep learning)"]
+  },
+  {
+    "id": "aprendizado-por-reforco-com-feedback-humano-rlhf",
+    "termo": "Aprendizado por reforço com feedback humano (RLHF)",
+    "categoria": "Termos técnicos",
+    "definicao": "Técnica em que pessoas avaliam as respostas do modelo, e essas avaliações são usadas para aperfeiçoá-lo, tornando-o mais útil e seguro.",
+    "verTambem": ["Aprendizado de máquina (machine learning)"]
+  },
+  {
+    "id": "aprendizado-profundo-deep-learning",
+    "termo": "Aprendizado profundo (deep learning)",
+    "categoria": "Termos técnicos",
+    "definicao": "Ramo do aprendizado de máquina que usa redes neurais com muitas camadas para reconhecer padrões complexos. É a base das ferramentas de IA atuais.",
+    "verTambem": ["Rede neural", "Aprendizado de máquina (machine learning)"]
+  },
+  {
+    "id": "artefato",
+    "termo": "Artefato",
+    "categoria": "Uso e prompts",
+    "definicao": "Conteúdo estruturado (um documento, uma tabela, um trecho de código) que algumas ferramentas de IA geram e exibem em um painel próprio, separado da conversa, para você editar e reaproveitar.",
+    "verTambem": ["Canvas"]
+  },
+  {
+    "id": "assistente-virtual",
+    "termo": "Assistente virtual",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Programa que ajuda o usuário a realizar tarefas por meio de conversa: responder perguntas, organizar informações ou redigir textos. Gemini e ChatGPT são exemplos.",
+    "verTambem": ["Chatbot", "Agente de IA"]
+  },
+  {
+    "id": "automacao",
+    "termo": "Automação",
+    "categoria": "Ferramentas",
+    "definicao": "Uso de tecnologia para executar tarefas repetitivas de forma automática, com pouca ou nenhuma intervenção manual. Exemplo: gerar e enviar ofícios em série.",
+    "verTambem": ["Fluxo de trabalho (workflow)"]
+  },
+  {
+    "id": "avaliacao-de-impacto-algoritmico",
+    "termo": "Avaliação de impacto algorítmico",
+    "categoria": "Dados e conformidade",
+    "definicao": "Análise feita antes de adotar uma solução de IA considerada de risco mais alto, para medir seus possíveis efeitos sobre direitos das pessoas. No MPPR, cabe a uma área técnica específica conduzi-la.",
+    "verTambem": ["DAIAC"]
+  },
+  {
+    "id": "banco-de-prompts",
+    "termo": "Banco de Prompts",
+    "categoria": "Ferramentas",
+    "definicao": "Coleção de comandos já testados e organizados, disponibilizada pelo MPPR, para que membros e servidores reaproveitem em tarefas do dia a dia sem precisar escrever tudo do zero.",
+    "verTambem": ["Prompt"]
+  },
+  {
+    "id": "base-de-conhecimento",
+    "termo": "Base de conhecimento",
+    "categoria": "Uso e prompts",
+    "definicao": "Conjunto de documentos confiáveis que você fornece à IA para que ela responda com base neles. É o que permite respostas mais precisas e verificáveis.",
+    "verTambem": ["RAG (geração aumentada por recuperação)", "NotebookLM"]
+  },
+  {
+    "id": "benchmark",
+    "termo": "Benchmark",
+    "categoria": "Riscos e limites",
+    "definicao": "Teste padronizado usado para medir e comparar o desempenho de diferentes modelos de IA em tarefas específicas.",
+    "verTambem": []
+  },
+  {
+    "id": "biometria",
+    "termo": "Biometria",
+    "categoria": "Dados e conformidade",
+    "definicao": "Identificação de uma pessoa por características físicas, como rosto, digital ou voz. No MPPR, o uso de IA para reconhecimento de emoções por biometria é vedado.",
+    "verTambem": ["Resolução PGJ 6031/2026"]
+  },
+  {
+    "id": "caixa-preta-black-box",
+    "termo": "Caixa-preta (black box)",
+    "categoria": "Riscos e limites",
+    "definicao": "Expressão que descreve a dificuldade de saber exatamente como a IA chegou a um resultado. Mesmo quem desenvolve a ferramenta nem sempre consegue explicar cada resposta.",
+    "verTambem": ["Explicabilidade"]
+  },
+  {
+    "id": "canvas",
+    "termo": "Canvas",
+    "categoria": "Uso e prompts",
+    "definicao": "Modo de trabalho, presente em algumas ferramentas, em que o texto ou código gerado aparece em um painel separado da conversa, permitindo editar e revisar aos poucos, lado a lado com o chat. Em algumas ferramentas, recurso semelhante é chamado de Artifacts.",
+    "verTambem": ["Artefato"]
+  },
+  {
+    "id": "chatbot",
+    "termo": "Chatbot",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Programa que conversa com o usuário por texto, em linguagem comum, respondendo a perguntas e pedidos. As ferramentas de IA generativa, como Gemini e ChatGPT, funcionam nesse formato.",
+    "verTambem": ["Assistente virtual", "Agente de IA"]
+  },
+  {
+    "id": "chatgpt",
+    "termo": "ChatGPT",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de IA generativa desenvolvida pela empresa OpenAI. No curso, é usada para ensinar conceitos gerais de inteligência artificial. Não é ferramenta oficial do MPPR, portanto não deve receber dados de processos ou informações sigilosas.",
+    "verTambem": ["Ferramenta homologada (institucional)"]
+  },
+  {
+    "id": "chunk-fragmento",
+    "termo": "Chunk (fragmento)",
+    "categoria": "Termos técnicos",
+    "definicao": "Pedaço em que um documento longo é dividido para que a IA consiga processá-lo por partes. Aparece no funcionamento das ferramentas que respondem com base em arquivos.",
+    "verTambem": ["RAG (geração aumentada por recuperação)", "Embedding (vetor)"]
+  },
+  {
+    "id": "claude",
+    "termo": "Claude",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de IA generativa desenvolvida pela empresa Anthropic. Assim como o ChatGPT, é uma ferramenta externa e não deve receber dados institucionais sigilosos.",
+    "verTambem": ["Ferramenta externa (não homologada)"]
+  },
+  {
+    "id": "codigo-aberto-open-source",
+    "termo": "Código aberto (open source)",
+    "categoria": "Termos técnicos",
+    "definicao": "Modelo de IA cujo funcionamento interno é disponibilizado publicamente, podendo ser usado e adaptado por qualquer pessoa. Opõe-se ao modelo proprietário, que é fechado e controlado por uma empresa.",
+    "verTambem": ["Modelo proprietário (fechado)"]
+  },
+  {
+    "id": "comando",
+    "termo": "Comando",
+    "categoria": "Uso e prompts",
+    "definicao": "Outro nome para prompt: a instrução que você escreve para a ferramenta de IA executar uma tarefa.",
+    "verTambem": ["Prompt", "Engenharia de prompt"]
+  },
+  {
+    "id": "conta-institucional",
+    "termo": "Conta institucional",
+    "categoria": "Dados e conformidade",
+    "definicao": "Conta de acesso fornecida pela instituição (por exemplo, o e-mail do MPPR). É por meio dela que se usa a ferramenta oficial de IA com garantia de sigilo. Ferramentas usadas fora da conta institucional não oferecem essa proteção.",
+    "verTambem": ["Ferramenta homologada (institucional)", "Dado sigiloso"]
+  },
+  {
+    "id": "contexto-janela-de-contexto",
+    "termo": "Contexto (janela de contexto)",
+    "categoria": "Uso e prompts",
+    "definicao": "Quantidade de informação que a ferramenta consegue \"levar em conta\" de uma só vez em uma conversa. Quando o texto é muito longo, partes mais antigas podem deixar de ser consideradas.",
+    "verTambem": ["Token"]
+  },
+  {
+    "id": "copilot",
+    "termo": "Copilot",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de IA generativa da empresa Microsoft, integrada a seus programas. É uma ferramenta externa, portanto não deve receber dados institucionais sigilosos.",
+    "verTambem": ["Ferramenta externa (não homologada)"]
+  },
+  {
+    "id": "dado-pessoal",
+    "termo": "Dado pessoal",
+    "categoria": "Dados e conformidade",
+    "definicao": "Qualquer informação que identifique ou permita identificar uma pessoa, como nome, CPF ou endereço. Recebe proteção legal específica.",
+    "verTambem": ["Dado sensível", "LGPD", "Anonimização"]
+  },
+  {
+    "id": "dado-sensivel",
+    "termo": "Dado sensível",
+    "categoria": "Dados e conformidade",
+    "definicao": "Categoria especial de dado pessoal que exige proteção reforçada: origem racial ou étnica, convicção religiosa, opinião política, dados de saúde, vida sexual e dados genéticos ou biométricos.",
+    "verTambem": ["Dado pessoal", "LGPD"]
+  },
+  {
+    "id": "dado-sigiloso",
+    "termo": "Dado sigiloso",
+    "categoria": "Dados e conformidade",
+    "definicao": "Informação protegida por sigilo legal, como a de processos em segredo de justiça. Só pode ser inserida em ferramentas oficiais da instituição, que garantem a proteção.",
+    "verTambem": ["Ferramenta homologada (institucional)", "Conta institucional"]
+  },
+  {
+    "id": "daiac",
+    "termo": "DAIAC",
+    "categoria": "Dados e conformidade",
+    "definicao": "Divisão de Análise e Inteligência Artificial Corporativa, área do Departamento de Tecnologia da Informação do MPPR responsável, entre outras funções, por classificar o risco das soluções de IA usadas na instituição.",
+    "verTambem": ["Avaliação de impacto algorítmico"]
+  },
+  {
+    "id": "deep-research-pesquisa-profunda",
+    "termo": "Deep Research (pesquisa profunda)",
+    "categoria": "Uso e prompts",
+    "definicao": "Recurso, presente em algumas ferramentas, em que a IA busca em muitas fontes de forma automática, por vários minutos, e entrega um relatório detalhado com as referências. Como qualquer saída de IA, exige conferência das fontes.",
+    "verTambem": ["Alucinação", "Verificação de fatos (fact-checking)"]
+  },
+  {
+    "id": "deepfake",
+    "termo": "Deepfake",
+    "categoria": "Riscos e limites",
+    "definicao": "Áudio, imagem ou vídeo falso, criado por IA, que imita de forma convincente uma pessoa real. Usado para desinformação e fraudes.",
+    "verTambem": []
+  },
+  {
+    "id": "degravacao",
+    "termo": "Degravação",
+    "categoria": "Ferramentas",
+    "definicao": "Transcrição de um áudio ou vídeo em texto escrito. No MPPR, é feita com apoio de IA pela ferramenta Hermes.",
+    "verTambem": ["Hermes", "Reconhecimento de voz (speech-to-text)"]
+  },
+  {
+    "id": "direitos-autorais-e-ia",
+    "termo": "Direitos autorais e IA",
+    "categoria": "Dados e conformidade",
+    "definicao": "Discussão jurídica sobre a titularidade e o uso de obras produzidas ou utilizadas por inteligência artificial. No MPPR, o integrante deve observar os direitos autorais ao empregar conteúdo gerado por IA.",
+    "verTambem": ["Resolução PGJ 6031/2026"]
+  },
+  {
+    "id": "embedding-vetor",
+    "termo": "Embedding (vetor)",
+    "categoria": "Termos técnicos",
+    "definicao": "Representação numérica de um texto que permite à IA comparar significados e encontrar conteúdos parecidos, mesmo com palavras diferentes. É a base das buscas por sentido usadas em ferramentas que consultam documentos.",
+    "verTambem": ["RAG (geração aumentada por recuperação)", "Chunk (fragmento)"]
+  },
+  {
+    "id": "engenharia-de-prompt",
+    "termo": "Engenharia de prompt",
+    "categoria": "Uso e prompts",
+    "definicao": "Técnica de escrever comandos de forma mais clara e estruturada para obter respostas melhores da IA. Inclui dar contexto, exemplos e instruções precisas sobre formato e tom.",
+    "verTambem": ["Prompt", "Exemplos no prompt (zero-shot e few-shot)"]
+  },
+  {
+    "id": "escore-de-risco-risk-scoring",
+    "termo": "Escore de risco (risk scoring)",
+    "categoria": "Dados e conformidade",
+    "definicao": "Nota ou pontuação atribuída por um sistema para estimar a probabilidade de um evento futuro. No MPPR, é vedado usar IA para prever a chance de alguém cometer crime.",
+    "verTambem": ["IA preditiva", "Resolução PGJ 6031/2026"]
+  },
+  {
+    "id": "exemplos-no-prompt-zero-shot-e-few-shot",
+    "termo": "Exemplos no prompt (zero-shot e few-shot)",
+    "categoria": "Uso e prompts",
+    "definicao": "Formas de escrever um comando. No \"zero-shot\", você pede a tarefa sem dar exemplos. No \"few-shot\", você inclui alguns exemplos do resultado desejado, o que costuma melhorar a resposta.",
+    "verTambem": ["Engenharia de prompt"]
+  },
+  {
+    "id": "explicabilidade",
+    "termo": "Explicabilidade",
+    "categoria": "Riscos e limites",
+    "definicao": "Capacidade de entender e justificar como um sistema de IA chegou a determinado resultado. Importante para decisões que afetam direitos.",
+    "verTambem": ["Caixa-preta (black box)"]
+  },
+  {
+    "id": "ferramenta-externa-nao-homologada",
+    "termo": "Ferramenta externa (não homologada)",
+    "categoria": "Dados e conformidade",
+    "definicao": "Ferramenta de IA fornecida por terceiros que não foi aprovada pela instituição e não oferece garantia de sigilo. Não deve receber dados institucionais.",
+    "verTambem": ["Ferramenta homologada (institucional)"]
+  },
+  {
+    "id": "ferramenta-homologada-institucional",
+    "termo": "Ferramenta homologada (institucional)",
+    "categoria": "Dados e conformidade",
+    "definicao": "Ferramenta de IA contratada ou aprovada pelo MPPR, com garantia de segurança e sigilo. É a única em que se pode inserir dados de trabalho da instituição. No MPPR, a ferramenta oficial de IA generativa é o Gemini.",
+    "verTambem": ["Gemini", "Conta institucional"]
+  },
+  {
+    "id": "fluxo-de-trabalho-workflow",
+    "termo": "Fluxo de trabalho (workflow)",
+    "categoria": "Uso e prompts",
+    "definicao": "Sequência de etapas para concluir uma tarefa. Ao usar IA, é o encadeamento de comandos e conferências que leva do pedido inicial ao resultado final.",
+    "verTambem": ["Automação", "Agente de IA"]
+  },
+  {
+    "id": "gemini",
+    "termo": "Gemini",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de IA generativa desenvolvida pelo Google e adotada oficialmente pelo MPPR, integrada ao Google Workspace. É a ferramenta em que se pode trabalhar com dados institucionais.",
+    "verTambem": ["Google Workspace", "Ferramenta homologada (institucional)"]
+  },
+  {
+    "id": "gems",
+    "termo": "Gems",
+    "categoria": "Ferramentas",
+    "definicao": "Assistentes personalizados criados dentro do Gemini para uma tarefa específica, com instruções fixas definidas pelo usuário. Evitam ter de repetir o mesmo comando toda vez.",
+    "verTambem": ["Gemini", "Skill"]
+  },
+  {
+    "id": "google-workspace",
+    "termo": "Google Workspace",
+    "categoria": "Ferramentas",
+    "definicao": "Conjunto de ferramentas do Google usadas no trabalho: Gmail, Documentos, Planilhas, Drive, entre outras. É nele que o Gemini está integrado no MPPR.",
+    "verTambem": ["Gemini"]
+  },
+  {
+    "id": "gpt",
+    "termo": "GPT",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Sigla, em inglês, para \"transformador generativo pré-treinado\". É o tipo de tecnologia por trás de ferramentas como o ChatGPT.",
+    "verTambem": ["Modelo de linguagem (LLM)"]
+  },
+  {
+    "id": "hermes",
+    "termo": "Hermes",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta do MPPR que faz a degravação (transcrição de áudio e vídeo em texto) com apoio de inteligência artificial.",
+    "verTambem": ["Degravação"]
+  },
+  {
+    "id": "ia-inteligencia-artificial",
+    "termo": "IA (Inteligência Artificial)",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Campo da tecnologia voltado a criar sistemas capazes de executar tarefas que, em geral, exigiriam inteligência humana, como interpretar texto, reconhecer imagens ou tomar decisões simples.",
+    "verTambem": []
+  },
+  {
+    "id": "ia-generativa",
+    "termo": "IA generativa",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Tipo de inteligência artificial que cria conteúdo novo (texto, imagem, áudio, tabelas) a partir de instruções escritas pelo usuário. A diferença em relação a uma busca comum é importante: a busca localiza algo que já existe, enquanto a IA generativa produz uma resposta original a cada pedido, com base em padrões que aprendeu de grandes volumes de dados.",
+    "verTambem": ["IA (Inteligência Artificial)", "IA preditiva"]
+  },
+  {
+    "id": "ia-preditiva",
+    "termo": "IA preditiva",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Tipo de inteligência artificial que estima resultados futuros ou probabilidades a partir de dados do passado, como prever uma tendência. Diferente da IA generativa, que cria conteúdo. No MPPR, prever a prática de crimes por IA é vedado.",
+    "verTambem": ["IA generativa", "Escore de risco (risk scoring)"]
+  },
+  {
+    "id": "inferencia",
+    "termo": "Inferência",
+    "categoria": "Termos técnicos",
+    "definicao": "Momento em que o modelo já treinado é usado para gerar uma resposta. Em termos simples, é a IA \"funcionando\" quando você faz um pedido.",
+    "verTambem": ["Modelo de IA"]
+  },
+  {
+    "id": "input-e-output-entrada-e-saida",
+    "termo": "Input e output (entrada e saída)",
+    "categoria": "Uso e prompts",
+    "definicao": "Input é tudo o que você fornece à ferramenta (o seu comando, um arquivo, uma imagem). Output é a resposta que ela devolve (um texto, um resumo, uma tabela).",
+    "verTambem": ["Prompt"]
+  },
+  {
+    "id": "instrucao-de-sistema-system-prompt",
+    "termo": "Instrução de sistema (system prompt)",
+    "categoria": "Uso e prompts",
+    "definicao": "Conjunto de orientações fixas, definidas por quem configura a ferramenta, que determinam como ela deve se comportar em todas as conversas, antes mesmo do pedido do usuário.",
+    "verTambem": ["Engenharia de prompt"]
+  },
+  {
+    "id": "jailbreak",
+    "termo": "Jailbreak",
+    "categoria": "Riscos e limites",
+    "definicao": "Tentativa de burlar as travas de segurança de uma ferramenta de IA para fazê-la produzir conteúdo que normalmente recusaria.",
+    "verTambem": ["Salvaguardas (guardrails)", "Prompt injection"]
+  },
+  {
+    "id": "jus-ia",
+    "termo": "Jus IA",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de inteligência artificial voltada ao trabalho jurídico. Por ser externa, segue a mesma regra de cautela: sem dados institucionais sigilosos.",
+    "verTambem": ["Ferramenta externa (não homologada)"]
+  },
+  {
+    "id": "lgpd",
+    "termo": "LGPD",
+    "categoria": "Dados e conformidade",
+    "definicao": "Lei Geral de Proteção de Dados. Norma que regula o tratamento de dados pessoais no Brasil e orienta os cuidados ao usar IA com esse tipo de informação.",
+    "verTambem": ["Dado pessoal", "Dado sensível"]
+  },
+  {
+    "id": "looker-studio",
+    "termo": "Looker Studio",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta gratuita do Google para criar painéis e relatórios visuais a partir de dados. Aparece nas aulas de automação e organização de informações.",
+    "verTambem": []
+  },
+  {
+    "id": "marca-d-agua-watermark",
+    "termo": "Marca d'água (watermark)",
+    "categoria": "Riscos e limites",
+    "definicao": "Sinal, muitas vezes invisível, inserido em um conteúdo gerado por IA para indicar sua origem artificial.",
+    "verTambem": ["Deepfake"]
+  },
+  {
+    "id": "markdown",
+    "termo": "Markdown",
+    "categoria": "Uso e prompts",
+    "definicao": "Forma simples de formatar texto usando sinais no meio das palavras, como asteriscos para negrito e o símbolo \"#\" para títulos. As ferramentas de IA costumam responder nesse formato; ao colar em um editor comum, os sinais podem aparecer literalmente e precisam ser ajustados.",
+    "verTambem": []
+  },
+  {
+    "id": "modelo-de-ia",
+    "termo": "Modelo de IA",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Nome técnico do sistema de IA já treinado e pronto para uso. Quando você usa o Gemini ou o ChatGPT, está usando um modelo por trás da tela.",
+    "verTambem": ["Modelo de linguagem (LLM)", "Modelo fundacional (foundation model)"]
+  },
+  {
+    "id": "modelo-de-linguagem-llm",
+    "termo": "Modelo de linguagem (LLM)",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Do inglês Large Language Model. É o \"motor\" por trás das ferramentas de IA generativa de texto. Foi treinado com enormes quantidades de texto para prever e gerar palavras de forma coerente. Não \"entende\" como um humano: calcula qual sequência de palavras é a resposta mais provável.",
+    "verTambem": ["Modelo de IA", "GPT"]
+  },
+  {
+    "id": "modelo-de-raciocinio",
+    "termo": "Modelo de raciocínio",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Tipo de modelo que \"pensa\" por etapas antes de responder, dedicando mais tempo a problemas complexos. Tende a errar menos em tarefas que exigem lógica.",
+    "verTambem": ["Raciocínio em cadeia (chain of thought)"]
+  },
+  {
+    "id": "modelo-fundacional-foundation-model",
+    "termo": "Modelo fundacional (foundation model)",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Modelo de grande porte, treinado com enorme volume de dados variados, que serve de base para muitas aplicações diferentes. Gemini e ChatGPT são construídos sobre modelos desse tipo.",
+    "verTambem": ["Modelo de linguagem (LLM)"]
+  },
+  {
+    "id": "modelo-proprietario-fechado",
+    "termo": "Modelo proprietário (fechado)",
+    "categoria": "Termos técnicos",
+    "definicao": "Modelo de IA cujo funcionamento interno não é divulgado publicamente e é controlado por uma empresa. Opõe-se ao modelo de código aberto. Gemini, ChatGPT e Claude são exemplos.",
+    "verTambem": ["Código aberto (open source)"]
+  },
+  {
+    "id": "mp-digital",
+    "termo": "MP Digital",
+    "categoria": "Ferramentas",
+    "definicao": "Estratégia nacional de modernização e transformação digital do Ministério Público, coordenada no âmbito do Conselho Nacional do Ministério Público. Reúne produtos e serviços para dar mais eficiência ao trabalho.",
+    "verTambem": []
+  },
+  {
+    "id": "multimodal",
+    "termo": "Multimodal",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Capacidade de uma ferramenta de trabalhar com mais de um tipo de conteúdo ao mesmo tempo, como texto, imagem, áudio e vídeo.",
+    "verTambem": []
+  },
+  {
+    "id": "naiper",
+    "termo": "NAIPER",
+    "categoria": "Ferramentas",
+    "definicao": "Robô de automação utilizado no MPPR para reduzir tarefas burocráticas e liberar a equipe para atividades mais qualificadas.",
+    "verTambem": ["Automação"]
+  },
+  {
+    "id": "nano-banana",
+    "termo": "Nano Banana",
+    "categoria": "Ferramentas",
+    "definicao": "Apelido do modelo de geração e edição de imagens do Google, integrado ao Gemini. Cria e altera imagens a partir de comandos em texto.",
+    "verTambem": ["Gemini"]
+  },
+  {
+    "id": "notebooklm",
+    "termo": "NotebookLM",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta do Google que responde perguntas e gera resumos com base em documentos que o próprio usuário fornece, em vez de responder a partir de conhecimento geral.",
+    "verTambem": ["RAG (geração aumentada por recuperação)", "Base de conhecimento"]
+  },
+  {
+    "id": "nuvem-cloud",
+    "termo": "Nuvem (cloud)",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Forma de usar programas e guardar arquivos pela internet, em servidores remotos, em vez de no próprio computador. A maioria das ferramentas de IA funciona na nuvem.",
+    "verTambem": []
+  },
+  {
+    "id": "ocr-reconhecimento-optico-de-caracteres",
+    "termo": "OCR (reconhecimento óptico de caracteres)",
+    "categoria": "Ferramentas",
+    "definicao": "Tecnologia que transforma o texto de uma imagem ou de um documento escaneado em texto editável. Útil para trabalhar com processos digitalizados.",
+    "verTambem": []
+  },
+  {
+    "id": "parametros",
+    "termo": "Parâmetros",
+    "categoria": "Termos técnicos",
+    "definicao": "Os \"ajustes internos\" que o modelo aprende durante o treinamento e que determinam suas respostas. Modelos maiores têm bilhões deles.",
+    "verTambem": ["Rede neural"]
+  },
+  {
+    "id": "perplexity",
+    "termo": "Perplexity",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de IA voltada à busca, que responde perguntas citando as fontes na internet. É uma ferramenta externa.",
+    "verTambem": []
+  },
+  {
+    "id": "plugin-extensao",
+    "termo": "Plugin (extensão)",
+    "categoria": "Uso e prompts",
+    "definicao": "Complemento que adiciona uma função nova a uma ferramenta de IA, permitindo, por exemplo, que ela acesse um serviço externo.",
+    "verTambem": ["Skill"]
+  },
+  {
+    "id": "processamento-de-linguagem-natural-pln",
+    "termo": "Processamento de linguagem natural (PLN)",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Área da IA que permite ao computador entender e produzir linguagem humana, escrita ou falada. Está por trás dos chatbots e da transcrição de áudio.",
+    "verTambem": ["Modelo de linguagem (LLM)"]
+  },
+  {
+    "id": "promotoria-digital",
+    "termo": "Promotoria Digital",
+    "categoria": "Ferramentas",
+    "definicao": "Sistema do MPPR que reúne, em uma mesma interface, informações e ferramentas usadas no cotidiano das Promotorias de Justiça.",
+    "verTambem": []
+  },
+  {
+    "id": "prompt",
+    "termo": "Prompt",
+    "categoria": "Uso e prompts",
+    "definicao": "Instrução ou pedido que você escreve para a ferramenta de IA. Pode ser uma pergunta, uma ordem ou a descrição de uma tarefa. A clareza do prompt influencia diretamente a qualidade da resposta.",
+    "verTambem": ["Comando", "Engenharia de prompt"]
+  },
+  {
+    "id": "prompt-injection",
+    "termo": "Prompt injection",
+    "categoria": "Riscos e limites",
+    "definicao": "Ataque em que instruções maliciosas são escondidas dentro de um conteúdo que a IA vai ler (um documento, um site), para fazê-la desobedecer às orientações originais ou vazar informações. Motivo de cautela ao pedir que a IA analise textos de origem desconhecida.",
+    "verTambem": ["Jailbreak", "Salvaguardas (guardrails)"]
+  },
+  {
+    "id": "pseudonimizacao",
+    "termo": "Pseudonimização",
+    "categoria": "Dados e conformidade",
+    "definicao": "Processo de substituir os dados que identificam uma pessoa por códigos ou marcadores, de modo que a reidentificação só seja possível com uma informação adicional guardada em separado. É menos protetiva que a anonimização.",
+    "verTambem": ["Anonimização"]
+  },
+  {
+    "id": "raciocinio-em-cadeia-chain-of-thought",
+    "termo": "Raciocínio em cadeia (chain of thought)",
+    "categoria": "Uso e prompts",
+    "definicao": "Técnica em que se pede à IA que explique o passo a passo do raciocínio antes de dar a resposta final. Ajuda em problemas que exigem lógica.",
+    "verTambem": ["Modelo de raciocínio"]
+  },
+  {
+    "id": "rag-geracao-aumentada-por-recuperacao",
+    "termo": "RAG (geração aumentada por recuperação)",
+    "categoria": "Termos técnicos",
+    "definicao": "Técnica que conecta a IA a uma base de documentos confiável, para que ela responda com base nesses documentos, e não apenas no que aprendeu. Reduz o risco de alucinação.",
+    "verTambem": ["Alucinação", "NotebookLM", "Base de conhecimento"]
+  },
+  {
+    "id": "reconhecimento-de-voz-speech-to-text",
+    "termo": "Reconhecimento de voz (speech-to-text)",
+    "categoria": "Ferramentas",
+    "definicao": "Tecnologia que converte fala em texto. Está por trás do ditado por voz e da transcrição automática.",
+    "verTambem": ["Degravação"]
+  },
+  {
+    "id": "rede-neural",
+    "termo": "Rede neural",
+    "categoria": "Termos técnicos",
+    "definicao": "Estrutura de cálculo inspirada, de forma simplificada, no funcionamento do cérebro, que permite ao sistema reconhecer padrões complexos. É o que está por baixo do aprendizado de máquina.",
+    "verTambem": ["Aprendizado profundo (deep learning)", "Parâmetros"]
+  },
+  {
+    "id": "resolucao-pgj-6031-2026",
+    "termo": "Resolução PGJ 6031/2026",
+    "categoria": "Dados e conformidade",
+    "definicao": "Norma que institui a Política de Utilização de Inteligência Artificial Generativa no MPPR. Define princípios, deveres e vedações para o uso de IA na instituição, como a supervisão humana obrigatória e o dever de verificar o conteúdo gerado.",
+    "verTambem": ["Verificação de fatos (fact-checking)", "Ferramenta homologada (institucional)"]
+  },
+  {
+    "id": "robo-chronos",
+    "termo": "Robô Chronos",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta de automação do MPPR usada para o envio em série de ofícios gerados no Núcleo de Inquéritos Policiais.",
+    "verTambem": ["Automação", "Apps Script"]
+  },
+  {
+    "id": "salvaguardas-guardrails",
+    "termo": "Salvaguardas (guardrails)",
+    "categoria": "Riscos e limites",
+    "definicao": "Travas e limites de segurança embutidos em uma ferramenta de IA para impedir usos perigosos ou proibidos.",
+    "verTambem": ["Jailbreak"]
+  },
+  {
+    "id": "scriba",
+    "termo": "Scriba",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta do MPPR voltada à análise processual com apoio de inteligência artificial.",
+    "verTambem": []
+  },
+  {
+    "id": "skill",
+    "termo": "Skill",
+    "categoria": "Uso e prompts",
+    "definicao": "Capacidade adicional, com instruções prontas, que estende o que um assistente de IA sabe fazer em uma tarefa específica, sem que você precise explicá-la toda vez. Aproxima-se da ideia dos Gems, no Gemini.",
+    "verTambem": ["Gems", "Plugin (extensão)"]
+  },
+  {
+    "id": "sobreajuste-overfitting",
+    "termo": "Sobreajuste (overfitting)",
+    "categoria": "Riscos e limites",
+    "definicao": "Falha de treinamento em que o modelo \"decora\" os exemplos vistos e passa a errar diante de situações novas, por não ter generalizado o padrão.",
+    "verTambem": ["Aprendizado de máquina (machine learning)"]
+  },
+  {
+    "id": "social-scoring-pontuacao-social",
+    "termo": "Social scoring (pontuação social)",
+    "categoria": "Dados e conformidade",
+    "definicao": "Classificação de pessoas com base em seu comportamento ou situação social. No MPPR, usar IA para isso, com fins de avaliar direitos, é vedado.",
+    "verTambem": ["Resolução PGJ 6031/2026"]
+  },
+  {
+    "id": "sumarizacao",
+    "termo": "Sumarização",
+    "categoria": "Uso e prompts",
+    "definicao": "Geração automática de um resumo de um texto longo, preservando os pontos principais. Um dos usos mais comuns da IA no trabalho jurídico.",
+    "verTambem": []
+  },
+  {
+    "id": "temperatura",
+    "termo": "Temperatura",
+    "categoria": "Uso e prompts",
+    "definicao": "Ajuste que controla o quanto as respostas da IA são mais previsíveis ou mais variadas e criativas. Nem toda ferramenta expõe esse controle ao usuário.",
+    "verTambem": []
+  },
+  {
+    "id": "token",
+    "termo": "Token",
+    "categoria": "Uso e prompts",
+    "definicao": "Menor unidade de texto que o modelo processa, podendo ser uma palavra, parte de uma palavra ou um sinal de pontuação. Importa porque as ferramentas têm limite de quantos tokens conseguem ler e gerar de cada vez.",
+    "verTambem": ["Contexto (janela de contexto)"]
+  },
+  {
+    "id": "turboscribe",
+    "termo": "TurboScribe",
+    "categoria": "Ferramentas",
+    "definicao": "Ferramenta on-line de transcrição que converte áudio e vídeo em texto com apoio de IA. É uma ferramenta externa; vale a mesma cautela com dados sigilosos.",
+    "verTambem": ["Degravação", "Ferramenta externa (não homologada)"]
+  },
+  {
+    "id": "verificacao-de-fatos-fact-checking",
+    "termo": "Verificação de fatos (fact-checking)",
+    "categoria": "Uso e prompts",
+    "definicao": "Conferência, em fonte oficial e confiável, das informações produzidas pela IA antes de usá-las. É obrigatória no MPPR, sobretudo para fatos, citações e referências legais.",
+    "verTambem": ["Alucinação", "Resolução PGJ 6031/2026"]
+  },
+  {
+    "id": "vies-algoritmico",
+    "termo": "Viés (algorítmico)",
+    "categoria": "Riscos e limites",
+    "definicao": "Tendência sistemática de erro ou distorção nas respostas da IA, herdada dos dados com que foi treinada. Pode reproduzir preconceitos de gênero, raça ou outros, e exige atenção redobrada em decisões que afetam pessoas.",
+    "verTambem": ["Explicabilidade"]
+  },
+  {
+    "id": "visao-computacional",
+    "termo": "Visão computacional",
+    "categoria": "Conceitos e fundamentos",
+    "definicao": "Área da IA que permite ao computador \"enxergar\" e interpretar imagens e vídeos.",
+    "verTambem": []
+  },
+  {
+    "id": "visual-law",
+    "termo": "Visual Law",
+    "categoria": "Uso e prompts",
+    "definicao": "Uso de recursos visuais, como imagens, gráficos e layout organizado, para tornar documentos jurídicos mais claros e fáceis de entender. No curso, aparece aplicado ao Tribunal do Júri com apoio de IA.",
+    "verTambem": []
+  }
+  ];
+
+  var CATEGORIAS = [
+    "Conceitos e fundamentos",
+    "Uso e prompts",
+    "Ferramentas",
+    "Riscos e limites",
+    "Dados e conformidade",
+    "Termos técnicos"
+  ];
+
+  var ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  /* ================= Utilidades ================= */
+
+  var DIACRITICOS = /[\u0300-\u036f]/g;
+
+  function esc(s){
+    return String(s)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+
+  function semAcento(s){
+    return String(s).normalize("NFD").replace(DIACRITICOS,"").toLowerCase();
+  }
+
+  function slug(s){
+    return semAcento(s).replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  }
+
+  /* Normaliza guardando, para cada caractere normalizado, o indice no texto
+     original. Isso permite destacar o trecho encontrado sem perder acentos. */
+  var cacheNorm = {};
+  function normMapa(texto){
+    if(Object.prototype.hasOwnProperty.call(cacheNorm, texto)) return cacheNorm[texto];
+    var chars = [], mapa = [];
+    for(var i=0;i<texto.length;i++){
+      var n = texto.charAt(i).normalize("NFD").replace(DIACRITICOS,"").toLowerCase();
+      for(var k=0;k<n.length;k++){ chars.push(n.charAt(k)); mapa.push(i); }
+    }
+    var r = { norm: chars.join(""), mapa: mapa };
+    cacheNorm[texto] = r;
+    return r;
+  }
+
+  function destacarTexto(texto, termos){
+    if(!termos.length) return esc(texto);
+    var nm = normMapa(texto), faixas = [], t, i, j;
+    for(j=0;j<termos.length;j++){
+      t = termos[j];
+      if(!t) continue;
+      i = nm.norm.indexOf(t);
+      while(i > -1){
+        faixas.push([nm.mapa[i], nm.mapa[i + t.length - 1] + 1]);
+        i = nm.norm.indexOf(t, i + 1);
+      }
+    }
+    if(!faixas.length) return esc(texto);
+    faixas.sort(function(a,b){ return a[0] - b[0]; });
+    var juntas = [];
+    for(var f=0;f<faixas.length;f++){
+      var ult = juntas[juntas.length-1];
+      if(ult && faixas[f][0] <= ult[1]){ ult[1] = Math.max(ult[1], faixas[f][1]); }
+      else { juntas.push([faixas[f][0], faixas[f][1]]); }
+    }
+    var saida = "", pos = 0;
+    for(var g=0;g<juntas.length;g++){
+      saida += esc(texto.slice(pos, juntas[g][0])) +
+               "<mark>" + esc(texto.slice(juntas[g][0], juntas[g][1])) + "</mark>";
+      pos = juntas[g][1];
+    }
+    return saida + esc(texto.slice(pos));
+  }
+
+  function primeiraLetra(termo){
+    var c = semAcento(termo).charAt(0).toUpperCase();
+    return /[A-Z]/.test(c) ? c : "#";
+  }
+
+  /* ================= Preparo dos dados ================= */
+
+  var PORID = {};
+  DADOS.forEach(function(d){
+    d._busca = semAcento(d.termo + " " + d.definicao);
+    d._letra = primeiraLetra(d.termo);
+    d._catSlug = slug(d.categoria);
+    PORID[d.id] = d;
+  });
+
+  DADOS.sort(function(a,b){
+    return a.termo.localeCompare(b.termo, "pt-BR", { sensitivity:"base" });
+  });
+
+  var TOTAL = DADOS.length;
+
+  /* ================= Estado (somente em memoria) ================= */
+
+  var estado = { busca:"", cats:[], modo:"az" };
+
+  /* ================= Elementos ================= */
+
+  var elScroller    = document.getElementById("scroller");
+  var elLista       = document.getElementById("lista");
+  var elBusca       = document.getElementById("busca");
+  var elLimpar      = document.getElementById("limpar");
+  var elChips       = document.getElementById("chips");
+  var elIndice      = document.getElementById("indice");
+  var elContador    = document.getElementById("contador");
+  var elLimparTudo  = document.getElementById("limparFiltros");
+  var elVoltarTopo  = document.getElementById("voltarTopo");
+  var elLegendaCats = document.getElementById("legendaCats");
+  var btModoAZ      = document.getElementById("modoAZ");
+  var btModoCat     = document.getElementById("modoCat");
+
+  var reduzirMovimento = !!(window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  /* ================= Montagem dos controles ================= */
+
+  (function montarChips(){
+    var html = '<button type="button" class="chip" data-cat="__todas" aria-pressed="true">Todas</button>';
+    CATEGORIAS.forEach(function(c){
+      html += '<button type="button" class="chip" data-cat="' + esc(c) + '" aria-pressed="false">' + esc(c) + '</button>';
+    });
+    elChips.innerHTML = html;
+  })();
+
+  (function montarLegenda(){
+    var html = "";
+    CATEGORIAS.forEach(function(c){
+      html += '<li><span class="selo cat-' + slug(c) + '">' + esc(c) + '</span></li>';
+    });
+    elLegendaCats.innerHTML = html;
+  })();
+
+  (function montarIndice(){
+    var html = "";
+    ALFABETO.forEach(function(l){
+      html += '<button type="button" class="letra" data-letra="' + l + '" aria-label="Ir para a letra ' + l + '">' + l + '</button>';
+    });
+    elIndice.innerHTML = html;
+  })();
+
+  /* ================= Filtragem ================= */
+
+  function termosBusca(){
+    var q = semAcento(estado.busca).trim();
+    if(!q) return [];
+    return q.split(/\s+/).filter(Boolean);
+  }
+
+  function visiveis(){
+    var termos = termosBusca();
+    return DADOS.filter(function(d){
+      if(estado.cats.length && estado.cats.indexOf(d.categoria) === -1) return false;
+      for(var i=0;i<termos.length;i++){
+        if(d._busca.indexOf(termos[i]) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  /* ================= Renderizacao ================= */
+
+  function htmlVerTambem(item){
+    if(!item.verTambem || !item.verTambem.length) return "";
+    var partes = item.verTambem.map(function(nome){
+      var alvo = slug(nome);
+      if(PORID[alvo]){
+        return '<a href="#' + alvo + '" class="ref" data-alvo="' + alvo + '">' + esc(nome) + "</a>";
+      }
+      return '<span class="sem-link">' + esc(nome) + "</span>";
+    });
+    return '<p class="ver"><span class="rot">Ver também:</span> ' + partes.join(", ") + "</p>";
+  }
+
+  function htmlVerbete(item, termos){
+    return '<article class="verbete" id="' + item.id + '" data-letra="' + item._letra + '" tabindex="-1">' +
+             '<div class="cab-verbete">' +
+               '<h3><a class="titulo" href="#' + item.id + '">' + destacarTexto(item.termo, termos) +
+                 '<span class="ancora" aria-hidden="true">#</span></a></h3>' +
+               '<span class="selo cat-' + item._catSlug + '">' + esc(item.categoria) + "</span>" +
+             "</div>" +
+             '<p class="def">' + destacarTexto(item.definicao, termos) + "</p>" +
+             htmlVerTambem(item) +
+           "</article>";
+  }
+
+  function htmlGrupo(titulo, itens, termos, classe, idGrupo){
+    var html = '<section class="grupo ' + classe + '" id="' + idGrupo + '">' +
+               '<div class="cab-grupo"><h2>' + esc(titulo) + "</h2>" +
+               '<span class="qtd">' + itens.length + (itens.length === 1 ? " termo" : " termos") + "</span></div>";
+    itens.forEach(function(it){ html += htmlVerbete(it, termos); });
+    return html + "</section>";
+  }
+
+  function renderizar(){
+    var lista = visiveis();
+    var termos = termosBusca();
+    var html = "";
+
+    if(!lista.length){
+      html = '<div class="vazio">' +
+               "<h2>Nenhum termo encontrado</h2>" +
+               "<p>Tente outra palavra ou limpe a busca e os filtros de categoria.</p>" +
+               '<button type="button" class="botao" data-acao="limpar-tudo">Limpar filtros</button>' +
+             "</div>";
+    } else if(estado.modo === "az"){
+      var porLetra = {};
+      lista.forEach(function(d){
+        if(!porLetra[d._letra]) porLetra[d._letra] = [];
+        porLetra[d._letra].push(d);
+      });
+      Object.keys(porLetra).sort().forEach(function(l){
+        html += htmlGrupo(l, porLetra[l], termos, "grupo-az", "letra-" + l);
+      });
+    } else {
+      CATEGORIAS.forEach(function(c){
+        var itens = lista.filter(function(d){ return d.categoria === c; });
+        if(itens.length) html += htmlGrupo(c, itens, termos, "grupo-cat", "cat-" + slug(c));
+      });
+    }
+
+    elLista.innerHTML = html;
+
+    elContador.innerHTML = "Mostrando <b>" + lista.length + "</b> de <b>" + TOTAL + "</b> termos";
+
+    var letrasVisiveis = {};
+    lista.forEach(function(d){ letrasVisiveis[d._letra] = true; });
+    var botoes = elIndice.querySelectorAll(".letra");
+    for(var i=0;i<botoes.length;i++){
+      var ativa = !!letrasVisiveis[botoes[i].getAttribute("data-letra")];
+      botoes[i].disabled = !ativa;
+      botoes[i].setAttribute("aria-disabled", ativa ? "false" : "true");
+    }
+
+    var temFiltro = !!estado.busca || estado.cats.length > 0;
+    elLimparTudo.hidden = !temFiltro;
+    elLimpar.hidden = !estado.busca;
+  }
+
+  /* ================= Rolagem e destaque ================= */
+
+  function alturaIndice(){
+    var n = document.querySelector(".indice");
+    return n ? n.offsetHeight + 8 : 8;
+  }
+
+  function rolarAte(el, deslocamento){
+    var alvo = el.getBoundingClientRect().top - elScroller.getBoundingClientRect().top +
+               elScroller.scrollTop - (deslocamento || 0);
+    if(alvo < 0) alvo = 0;
+    if(elScroller.scrollTo){
+      try{
+        elScroller.scrollTo({ top: alvo, behavior: reduzirMovimento ? "auto" : "smooth" });
+        return;
+      }catch(e){}
+    }
+    elScroller.scrollTop = alvo;
+  }
+
+  var timerDestaque = null;
+  function destacar(el){
+    var anterior = elLista.querySelector(".verbete.destacado");
+    if(anterior) anterior.classList.remove("destacado");
+    if(timerDestaque) clearTimeout(timerDestaque);
+    el.classList.add("destacado");
+    timerDestaque = setTimeout(function(){ el.classList.remove("destacado"); }, 2000);
+  }
+
+  function atualizarChips(){
+    var chips = elChips.querySelectorAll(".chip");
+    for(var i=0;i<chips.length;i++){
+      var c = chips[i].getAttribute("data-cat");
+      var ativo = (c === "__todas") ? estado.cats.length === 0 : estado.cats.indexOf(c) > -1;
+      chips[i].setAttribute("aria-pressed", ativo ? "true" : "false");
+    }
+  }
+
+  function limparFiltros(){
+    estado.busca = "";
+    estado.cats = [];
+    elBusca.value = "";
+    atualizarChips();
+    renderizar();
+  }
+
+  var ignorarHash = false;
+  function definirHash(id){
+    ignorarHash = true;
+    try{
+      if(window.history && window.history.replaceState){
+        window.history.replaceState(null, "", "#" + id);
+      } else {
+        window.location.hash = id;
+      }
+    }catch(e){
+      try{ window.location.hash = id; }catch(e2){}
+    }
+    setTimeout(function(){ ignorarHash = false; }, 60);
+  }
+
+  function irPara(id, comHash){
+    var item = PORID[id];
+    if(!item) return;
+    if(!document.getElementById(id)) limparFiltros();
+    var el = document.getElementById(id);
+    if(!el) return;
+    rolarAte(el, alturaIndice());
+    destacar(el);
+    if(el.focus){
+      try{ el.focus({ preventScroll:true }); }catch(e){}
+    }
+    if(comHash) definirHash(id);
+  }
+
+  function maisProximo(alvo, seletor){
+    var n = alvo;
+    while(n && n.nodeType === 1){
+      if(n.matches && n.matches(seletor)) return n;
+      n = n.parentElement;
+    }
+    return null;
+  }
+
+  /* ================= Eventos ================= */
+
+  elBusca.addEventListener("input", function(){
+    estado.busca = elBusca.value;
+    renderizar();
+    elScroller.scrollTop = 0;
+  });
+
+  elBusca.addEventListener("keydown", function(ev){
+    if(ev.key === "Escape" && elBusca.value){
+      ev.preventDefault();
+      elBusca.value = "";
+      estado.busca = "";
+      renderizar();
+    }
+  });
+
+  elLimpar.addEventListener("click", function(){
+    elBusca.value = "";
+    estado.busca = "";
+    renderizar();
+    elBusca.focus();
+  });
+
+  elChips.addEventListener("click", function(ev){
+    var b = maisProximo(ev.target, ".chip");
+    if(!b) return;
+    var c = b.getAttribute("data-cat");
+    if(c === "__todas"){
+      estado.cats = [];
+    } else {
+      var i = estado.cats.indexOf(c);
+      if(i > -1) estado.cats.splice(i, 1);
+      else estado.cats.push(c);
+    }
+    atualizarChips();
+    renderizar();
+    elScroller.scrollTop = 0;
+  });
+
+  function definirModo(m){
+    if(estado.modo === m) return;
+    estado.modo = m;
+    btModoAZ.setAttribute("aria-pressed", m === "az" ? "true" : "false");
+    btModoCat.setAttribute("aria-pressed", m === "cat" ? "true" : "false");
+    renderizar();
+    elScroller.scrollTop = 0;
+  }
+  btModoAZ.addEventListener("click", function(){ definirModo("az"); });
+  btModoCat.addEventListener("click", function(){ definirModo("cat"); });
+
+  elIndice.addEventListener("click", function(ev){
+    var b = maisProximo(ev.target, ".letra");
+    if(!b || b.disabled) return;
+    var letra = b.getAttribute("data-letra");
+    var alvo = document.getElementById("letra-" + letra);
+    if(!alvo) alvo = elLista.querySelector('.verbete[data-letra="' + letra + '"]');
+    if(alvo) rolarAte(alvo, alturaIndice());
+  });
+
+  elLista.addEventListener("click", function(ev){
+    var ref = maisProximo(ev.target, "a.ref");
+    if(ref){
+      ev.preventDefault();
+      irPara(ref.getAttribute("data-alvo"), true);
+      return;
+    }
+    var titulo = maisProximo(ev.target, "a.titulo");
+    if(titulo){
+      ev.preventDefault();
+      var art = maisProximo(titulo, ".verbete");
+      if(art){
+        definirHash(art.id);
+        rolarAte(art, alturaIndice());
+        destacar(art);
+      }
+      return;
+    }
+    if(maisProximo(ev.target, '[data-acao="limpar-tudo"]')){
+      limparFiltros();
+      elBusca.focus();
+    }
+  });
+
+  elLimparTudo.addEventListener("click", function(){
+    limparFiltros();
+    elScroller.scrollTop = 0;
+    elBusca.focus();
+  });
+
+  elVoltarTopo.addEventListener("click", function(){
+    if(elScroller.scrollTo){
+      try{
+        elScroller.scrollTo({ top:0, behavior: reduzirMovimento ? "auto" : "smooth" });
+      }catch(e){ elScroller.scrollTop = 0; }
+    } else {
+      elScroller.scrollTop = 0;
+    }
+    elBusca.focus();
+  });
+
+  elScroller.addEventListener("scroll", function(){
+    if(elScroller.scrollTop > 260) elVoltarTopo.classList.add("visivel");
+    else elVoltarTopo.classList.remove("visivel");
+  });
+
+  window.addEventListener("hashchange", function(){
+    if(ignorarHash) return;
+    var id = "";
+    try{ id = (window.location.hash || "").replace(/^#/, ""); }catch(e){}
+    if(id && PORID[id]) irPara(id, false);
+  });
+
+  /* ================= Inicio ================= */
+
+  atualizarChips();
+  renderizar();
+
+  (function abrirAncoraInicial(){
+    var id = "";
+    try{ id = (window.location.hash || "").replace(/^#/, ""); }catch(e){}
+    if(id && PORID[id]){
+      setTimeout(function(){ irPara(id, false); }, 80);
+    }
+  })();
+
+})();
+</script>
+</body>
+</html>
