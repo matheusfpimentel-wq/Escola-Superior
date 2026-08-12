@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Estimador de tokens e contexto | Escola Superior do MPPR</title>
+<title>Prompt Guiado | Escola Superior do MPPR</title>
 <style>
   /* ====== Tipografia institucional (Futura, embutida) ====== */
   @font-face{
@@ -407,100 +407,77 @@
     background:var(--fundo);
   }
 
-  /* ====== Numeros ====== */
-  .numeros{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(128px, 1fr));
-    gap:8px;
-    margin:0 0 14px;
+  /* ====== Assistente guiado ====== */
+  .assistente{padding:18px 18px 20px;}
+
+  .progresso{margin:0 0 18px;}
+  .progresso[hidden]{display:none;}
+  .progresso-topo{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    gap:8px 14px; margin-bottom:6px;
   }
-  .n{
-    background:var(--branco);
-    border:1px solid var(--linha);
-    border-left:3px solid var(--azul);
-    border-radius:0 var(--raio) var(--raio) 0;
-    padding:11px 13px;
+  .progresso-rotulo{
+    font-family:var(--titulo); font-weight:600;
+    font-size:.76rem; letter-spacing:.03em; text-transform:uppercase;
+    color:var(--cinza);
   }
-  .n .valor{
-    display:block;
+  .trilho-progresso{height:5px; background:#E7EBF1; border-radius:3px; overflow:hidden;}
+  .preenche-progresso{height:100%; width:0; background:var(--azul); border-radius:3px; transition:width .25s ease;}
+
+  .tela[hidden]{display:none;}
+  .tela > h2{
+    margin:0 0 5px;
     font-family:var(--titulo); font-weight:700;
-    font-size:1.5rem; line-height:1.1; color:var(--navy);
+    font-size:1.12rem; color:var(--navy);
   }
-  .n .rot{
+  .tela > .ajuda{margin:0 0 16px; font-size:.88rem; color:var(--texto-2);}
+  .tela .rotulo{margin-top:14px;}
+  .tela .rotulo:first-of-type{margin-top:0;}
+  .campo-outro{margin-top:7px;}
+
+  .opcoes-inicio{display:flex; flex-wrap:wrap; gap:9px; margin:0 0 20px;}
+
+  .predefinicoes{margin-top:2px;}
+  .grupo-predef{margin:0 0 12px;}
+  .grupo-predef:last-child{margin-bottom:0;}
+  .rotulo-predef{
     display:block;
     font-family:var(--titulo); font-weight:600;
-    font-size:.72rem; letter-spacing:.03em;
-    color:var(--cinza); margin-top:3px;
+    font-size:.72rem; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--cinza); margin-bottom:6px;
   }
-  .n .sub{
-    display:block; font-size:.75rem; color:var(--texto-2); margin-top:2px;
+  .linha-predef{display:flex; flex-wrap:wrap; gap:6px;}
+  .predef{
+    border:1px solid #C6CEDA; background:var(--branco); color:var(--texto-2);
+    font-family:var(--texto); font-size:.83rem;
+    padding:7px 12px; border-radius:var(--raio); cursor:pointer; text-align:left;
   }
-  .n.destaque{border-left-color:var(--navy); background:#F7F9FC;}
+  .predef:hover{border-color:var(--azul); color:var(--azul); background:var(--azul-suave);}
 
-  /* ====== Janelas de contexto ====== */
-  .janela{margin:0 0 9px;}
-  .janela:last-child{margin-bottom:0;}
-  .janela .topo-linha{
-    display:flex; align-items:baseline; gap:8px;
-    font-size:.85rem; margin-bottom:4px;
+  .navegacao{
+    display:flex; justify-content:space-between; gap:10px;
+    margin-top:20px; padding-top:16px; border-top:1px solid var(--linha);
   }
-  .janela .nome{
-    font-family:var(--titulo); font-weight:600;
-    color:var(--navy); font-size:.87rem;
-  }
-  .janela .pct{margin-left:auto; color:var(--texto-2); font-size:.8rem;}
-  .trilho{
-    height:9px; background:#E7EBF1; border-radius:5px; overflow:hidden;
-  }
-  .preenche{
-    height:100%; width:0;
-    background:var(--azul);
-    border-radius:5px;
-    transition:width .25s ease, background-color .25s ease;
-  }
-  .preenche.apertado{background:#C9A227;}
-  .preenche.estoura{background:#9A2C2C;}
+  .navegacao[hidden]{display:none;}
 
-  /* ====== Partes ====== */
-  .parte{
-    background:var(--branco);
-    border:1px solid var(--linha);
-    border-radius:var(--raio);
-    margin:0 0 8px;
-    overflow:hidden;
+  #fResultado{
+    font-family:ui-monospace, "Cascadia Mono", "Courier New", monospace;
+    font-size:.88rem; line-height:1.6; min-height:320px;
   }
-  .parte-cab{
-    display:flex; align-items:center; gap:9px;
-    padding:9px 12px;
-    background:#F7F9FC;
-    border-bottom:1px solid var(--linha);
-  }
-  .parte-cab .titulo-parte{
-    font-family:var(--titulo); font-weight:700;
-    font-size:.85rem; color:var(--navy);
-  }
-  .parte-cab .qtd{font-size:.76rem; color:var(--cinza);}
-  .parte-cab .bt{margin-left:auto; padding:5px 10px; font-size:.76rem;}
-  .parte textarea{
-    border:0; border-radius:0;
-    font-size:.85rem; line-height:1.5;
-    min-height:96px;
-  }
-  .parte textarea:focus{box-shadow:none;}
 
   @media (max-width:700px){
     .wrap{padding:0 16px;}
     .marca h1{font-size:1.2rem;}
-    .numeros{grid-template-columns:repeat(auto-fit, minmax(112px, 1fr));}
   }
   @media (max-width:480px){
     .marca .wrap{padding-top:11px; padding-bottom:12px;}
     .logo .sigla{font-size:1.4rem;}
     .unidade{font-size:.92rem;}
     .marca h1{font-size:1.08rem; margin-top:11px;}
-    .n .valor{font-size:1.28rem;}
     .conteudo{padding-top:14px;}
-    .painel{padding:13px;}
+    .painel, .assistente{padding:13px;}
+    .opcoes-inicio{flex-direction:column;}
+    .opcoes-inicio .bt{width:100%; justify-content:center;}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition-duration:.01ms !important;}
@@ -561,61 +538,176 @@
         <div class="divisor" aria-hidden="true"></div>
         <div class="unidade">Escola Superior</div>
       </div>
-      <h1><span class="leve">Estimador de</span>Tokens e contexto</h1>
+      <h1><span class="leve">Prompt</span>Guiado</h1>
     </div>
   </header>
 
   <div class="scroller" id="scroller">
     <div class="wrap conteudo">
 
-      <section class="painel">
-        <h2>Texto para medir</h2>
-        <p class="ajuda">Cole aqui o documento ou o comando que pretende enviar para a ferramenta de IA. A medição acontece no seu navegador: nada é enviado para lugar nenhum.</p>
-        <label class="rotulo" for="texto">Texto</label>
-        <textarea id="texto" rows="7" spellcheck="false" placeholder="Cole o texto aqui..."></textarea>
-        <div class="barra">
-          <label class="bt" for="arquivo">Abrir arquivo .txt</label>
-          <input type="file" id="arquivo" accept=".txt,.md,text/plain" hidden>
-          <button type="button" class="bt bt-fantasma" id="limparTexto">Limpar</button>
-          <span class="recado" id="recadoArquivo" role="status" aria-live="polite"></span>
-        </div>
-      </section>
+      <section class="painel assistente">
 
-      <section class="numeros" aria-label="Medidas do texto">
-        <div class="n destaque">
-          <span class="valor" id="vTokens">0</span>
-          <span class="rot">tokens estimados</span>
-          <span class="sub" id="vFaixa">entre 0 e 0</span>
+        <div class="progresso" id="progresso">
+          <div class="progresso-topo">
+            <span class="progresso-rotulo" id="progressoRotulo">Passo 1</span>
+            <button type="button" class="link-botao" id="pularResultado">Pular para o resultado</button>
+          </div>
+          <div class="trilho-progresso"><div class="preenche-progresso" id="preencheProgresso"></div></div>
         </div>
-        <div class="n"><span class="valor" id="vCar">0</span><span class="rot">caracteres</span></div>
-        <div class="n"><span class="valor" id="vPal">0</span><span class="rot">palavras</span></div>
-        <div class="n"><span class="valor" id="vPag">0</span><span class="rot">páginas A4</span><span class="sub">2 mil caracteres cada</span></div>
-        <div class="n"><span class="valor" id="vLeitura">0</span><span class="rot">min de leitura</span><span class="sub">200 palavras por minuto</span></div>
-      </section>
 
-      <section class="painel">
-        <h2>Como isso ocupa a janela de contexto</h2>
-        <p class="ajuda">A barra considera apenas o que você envia. A resposta da ferramenta também ocupa espaço na mesma janela, então convém deixar folga.</p>
-        <div id="janelas"></div>
-        <p class="nota">Tamanhos usados como referência. Confirme o limite da ferramenta que você usa, porque ele muda de modelo para modelo e de versão para versão.</p>
-      </section>
-
-      <section class="painel">
-        <h2>Dividir em partes</h2>
-        <p class="ajuda">Quando o texto não cabe de uma vez, divida e envie por etapas. O corte respeita os parágrafos, para não partir uma frase no meio.</p>
-        <div class="barra">
-          <label class="rotulo" for="tamParte" style="margin:0 6px 0 0;">Tokens por parte</label>
-          <input type="number" id="tamParte" value="2000" min="200" max="200000" step="100"
-                 style="width:104px;padding:8px 10px;border:1px solid #C6CEDA;border-radius:4px;font-family:var(--texto);font-size:.9rem;">
-          <button type="button" class="bt bt-forte" id="dividir">Dividir</button>
-          <span class="recado" id="recadoDividir" role="status" aria-live="polite"></span>
+        <!-- ====== Inicio ====== -->
+        <div class="tela" data-tela="inicio">
+          <h2>Vamos montar o seu prompt</h2>
+          <p class="ajuda">Responda algumas perguntas curtas sobre papel, objetivo, formato e regras, e o prompt sai pronto em Markdown. Se preferir, comece de um exemplo já preenchido ou direto de um modelo em branco.</p>
+          <div class="opcoes-inicio">
+            <button type="button" class="bt bt-forte" id="comecarGuiado">Responder as perguntas</button>
+            <button type="button" class="bt" id="comecarBranco">Usar modelo em branco</button>
+          </div>
+          <div class="predefinicoes" id="predefinicoes" aria-label="Começar de um exemplo"></div>
         </div>
-        <div id="partes" style="margin-top:12px;"></div>
+
+        <!-- ====== Papel, publico e tom ====== -->
+        <div class="tela" data-tela="papel" hidden>
+          <h2>Papel, público e tom</h2>
+          <p class="ajuda">Isso ajusta o ponto de vista e o registro da resposta. Todos os campos são opcionais.</p>
+
+          <label class="rotulo" for="fPersona">Que papel a IA deve assumir?</label>
+          <input type="text" id="fPersona" placeholder="ex.: revisor de textos jurídicos">
+
+          <label class="rotulo" for="fPublico">Quem vai usar ou ler o resultado?</label>
+          <input type="text" id="fPublico" placeholder="ex.: um colega sem formação jurídica">
+
+          <label class="rotulo" for="fTom">Que tom o texto deve ter?</label>
+          <select id="fTom">
+            <option value="">(não especificar)</option>
+            <option value="formal">Formal e institucional</option>
+            <option value="neutro">Neutro e objetivo</option>
+            <option value="didatico">Didático e simples</option>
+            <option value="direto">Direto e crítico</option>
+            <option value="acolhedor">Acolhedor</option>
+            <option value="outro">Outro...</option>
+          </select>
+          <input type="text" id="fTomOutro" class="campo-outro" placeholder="Descreva o tom desejado" hidden>
+        </div>
+
+        <!-- ====== Objetivo e contexto ====== -->
+        <div class="tela" data-tela="objetivo" hidden>
+          <h2>Objetivo e contexto</h2>
+          <p class="ajuda">O objetivo é o campo mais importante: é o que diz à IA o que fazer.</p>
+
+          <label class="rotulo" for="fObjetivo">O que você quer que a IA faça?</label>
+          <textarea id="fObjetivo" rows="3" placeholder="ex.: resumir um documento, comparar dois textos, montar uma tabela..."></textarea>
+
+          <label class="rotulo" for="fContexto">Que informação de fundo ela precisa saber?</label>
+          <textarea id="fContexto" rows="3" placeholder="Regras do caso, prazos, o que já foi tentado..."></textarea>
+        </div>
+
+        <!-- ====== Material e fontes ====== -->
+        <div class="tela" data-tela="material" hidden>
+          <h2>Material e fontes</h2>
+          <p class="ajuda">Se o prompt vai analisar um texto ou documento, cole aqui. Se preferir colar só na hora de usar, deixe em branco: as regras abaixo continuam valendo.</p>
+
+          <label class="rotulo" for="fMaterial">Texto, documento ou dado de apoio</label>
+          <textarea id="fMaterial" rows="5" placeholder="Cole aqui, ou deixe em branco para colar depois"></textarea>
+
+          <label class="opcao">
+            <input type="checkbox" id="fRestrito">
+            <span class="txt"><b>Usar apenas o material fornecido</b>, sem completar com conhecimento geral</span>
+          </label>
+          <label class="opcao">
+            <input type="checkbox" id="fCitarOrigem">
+            <span class="txt"><b>Pedir a origem</b> de cada informação usada na resposta</span>
+          </label>
+        </div>
+
+        <!-- ====== Formato, estrutura e extensao ====== -->
+        <div class="tela" data-tela="formato" hidden>
+          <h2>Formato, estrutura e extensão</h2>
+          <p class="ajuda">Diz à IA como organizar a resposta.</p>
+
+          <label class="rotulo" for="fFormato">Formato da resposta</label>
+          <select id="fFormato">
+            <option value="">(não especificar)</option>
+            <option value="corrido">Texto corrido</option>
+            <option value="topicos">Tópicos</option>
+            <option value="tabela">Tabela</option>
+            <option value="numerada">Lista numerada</option>
+            <option value="passoapasso">Passo a passo</option>
+            <option value="json">JSON</option>
+            <option value="outro">Outro...</option>
+          </select>
+          <input type="text" id="fFormatoOutro" class="campo-outro" placeholder="Descreva o formato" hidden>
+
+          <label class="rotulo" for="fSecoes">Que seções ou tópicos a resposta deve ter?</label>
+          <input type="text" id="fSecoes" placeholder="ex.: resumo, riscos, próximos passos">
+
+          <label class="rotulo" for="fExtensao">Algum limite de tamanho?</label>
+          <input type="text" id="fExtensao" placeholder="ex.: até uma página, cinco tópicos">
+        </div>
+
+        <!-- ====== Regras e qualidade ====== -->
+        <div class="tela" data-tela="regras" hidden>
+          <h2>Regras e qualidade</h2>
+          <p class="ajuda">O que a IA precisa respeitar, e como você vai reconhecer uma boa resposta.</p>
+
+          <label class="rotulo" for="fRestricoes">O que a IA não deve fazer? (uma regra por linha)</label>
+          <textarea id="fRestricoes" rows="4" placeholder="ex.: não inventar número de processo&#10;não usar linguagem informal"></textarea>
+
+          <label class="rotulo" for="fIncerteza">Se faltar informação ou surgir dúvida, o que a IA deve fazer?</label>
+          <select id="fIncerteza">
+            <option value="">(não especificar)</option>
+            <option value="naoconsta">Dizer que não sabe ou que não consta</option>
+            <option value="sinalizar">Sinalizar claramente como suposição</option>
+            <option value="perguntar">Perguntar antes de responder</option>
+            <option value="personalizado">Outro...</option>
+          </select>
+          <input type="text" id="fIncertezaOutro" class="campo-outro" placeholder="Descreva o que a IA deve fazer" hidden>
+
+          <label class="opcao" style="margin-top:14px;">
+            <input type="checkbox" id="fPassoAPasso">
+            <span class="txt">Explicar o raciocínio, passo a passo, antes da resposta final</span>
+          </label>
+
+          <label class="rotulo" for="fCriterio">Como você vai saber que a resposta está boa?</label>
+          <textarea id="fCriterio" rows="2" placeholder="ex.: consigo usar o texto sem reescrever a estrutura"></textarea>
+        </div>
+
+        <!-- ====== Exemplo ====== -->
+        <div class="tela" data-tela="exemplo" hidden>
+          <h2>Exemplo (opcional)</h2>
+          <p class="ajuda">Um exemplo do resultado esperado costuma melhorar bastante a resposta. Pode deixar em branco.</p>
+
+          <label class="rotulo" for="fExemplo">Exemplo do resultado esperado</label>
+          <textarea id="fExemplo" rows="5" placeholder="Cole aqui um exemplo, se tiver um"></textarea>
+        </div>
+
+        <!-- ====== Resultado ====== -->
+        <div class="tela" data-tela="resultado" hidden>
+          <h2>Seu prompt em Markdown</h2>
+          <p class="ajuda">Edite livremente. Depois, copie e cole na página <b>Editor de Markdown</b> para formatar, ou direto na ferramenta de IA que você usa.</p>
+
+          <label class="rotulo oculto-visual" for="fResultado">Prompt em Markdown</label>
+          <textarea id="fResultado" spellcheck="false"></textarea>
+
+          <div class="barra">
+            <button type="button" class="bt bt-forte" id="copiarResultado">Copiar Markdown</button>
+            <button type="button" class="bt" id="atualizarResultado">Atualizar com as respostas</button>
+            <button type="button" class="bt bt-fantasma direita" id="reiniciar">Recomeçar</button>
+            <span class="recado" id="recado" role="status" aria-live="polite"></span>
+          </div>
+          <p class="contador-discreto" id="contadorDiscreto">~0 tokens (estimativa)</p>
+        </div>
+
+        <div class="navegacao" id="navegacao" hidden>
+          <button type="button" class="bt" id="btVoltar">Voltar</button>
+          <button type="button" class="bt bt-forte" id="btContinuar">Continuar</button>
+        </div>
+
       </section>
 
       <p class="aviso">
-        <b>O número é uma estimativa.</b> Cada modelo divide o texto em tokens de um jeito próprio, e a contagem real só sai na ferramenta.
-        Use este resultado para decidir se vale dividir o documento, não como medida exata.
+        <b>O prompt pronto ainda não é a resposta.</b> Um prompt bem montado melhora a pergunta, não garante o resultado:
+        confira fatos, citações e referências legais em fonte oficial antes de usar qualquer conteúdo gerado por IA.
       </p>
 
     </div>
@@ -641,171 +733,437 @@
 (function(){
   "use strict";
 
-  /* Tokenizadores atuais ficam entre 3,2 e 4,2 caracteres por token em
-     português. Trabalhamos com essa faixa e com 3,7 como valor central. */
-  var CAR_POR_TOKEN = 3.7, CAR_MIN = 3.2, CAR_MAX = 4.2;
-
-  var JANELAS = [
-    { nome: "8 mil tokens",   limite: 8000 },
-    { nome: "32 mil tokens",  limite: 32000 },
-    { nome: "128 mil tokens", limite: 128000 },
-    { nome: "200 mil tokens", limite: 200000 },
-    { nome: "1 milhão de tokens", limite: 1000000 }
+  var PRESETS = [
+{"grupo": "Análise de documentos", "nome": "Resumo de peça ou documento", "v": {"persona": "apoio de análise documental em uma Promotoria de Justiça", "publico": "membro ou servidor do Ministério Público", "tom": "formal", "objetivo": "Resumir um documento longo para eu entender rapidamente do que se trata e o que precisa de providência.", "contexto": "Recebi o documento abaixo e preciso de uma leitura rápida antes de despachar.", "material": "", "restrito": true, "citarOrigem": true, "formato": "topicos", "secoes": "Do que se trata; Partes envolvidas; Fatos relevantes; Pedidos ou providências; Prazos e datas; Pontos obscuros", "extensao": "Até uma página", "restricoes": "Manter nomes, números e datas exatamente como no original.\nNão classificar juridicamente os fatos, apenas descrever.", "incerteza": "naoconsta", "passoAPasso": false, "criterio": "Consigo entender o documento sem abrir o original e sei quais pontos precisam de conferência.", "exemplo": ""}},
+{"grupo": "Análise de documentos", "nome": "Comparação entre dois documentos", "v": {"persona": "analista encarregado de confrontar versões de um mesmo assunto", "publico": "membro ou servidor do Ministério Público", "tom": "neutro", "objetivo": "Comparar dois documentos e identificar onde eles concordam, onde divergem e o que ficou de fora.", "contexto": "Preciso saber se as duas manifestações abaixo são compatíveis entre si.", "material": "Documento A:\n[COLE AQUI O PRIMEIRO DOCUMENTO]\n\nDocumento B:\n[COLE AQUI O SEGUNDO DOCUMENTO]", "restrito": true, "citarOrigem": true, "formato": "tabela", "secoes": "Convergências; Divergências; Omissões", "extensao": "", "restricoes": "Distinguir divergência de conteúdo de mera diferença de redação.", "incerteza": "naoconsta", "passoAPasso": false, "criterio": "As divergências reais aparecem separadas das diferenças de estilo.", "exemplo": ""}},
+{"grupo": "Análise de documentos", "nome": "Linha do tempo dos fatos", "v": {"persona": "apoio de organização de informação processual", "publico": "membro ou servidor do Ministério Público", "tom": "neutro", "objetivo": "Extrair de um texto todos os fatos com data e montar uma cronologia.", "contexto": "O relato abaixo está em ordem confusa e preciso da sequência dos acontecimentos.", "material": "", "restrito": true, "citarOrigem": true, "formato": "tabela", "secoes": "Data; Fato; Fonte no texto", "extensao": "Uma linha por fato", "restricoes": "Ordenar da data mais antiga para a mais recente.\nMarcar como \"(aproximada)\" as referências relativas, como \"no mês seguinte\".\nNão deduzir datas que não estejam no texto.", "incerteza": "naoconsta", "passoAPasso": false, "criterio": "Consigo remontar a sequência dos fatos sem reler o documento inteiro.", "exemplo": ""}},
+{"grupo": "Redação", "nome": "Minuta de ofício", "v": {"persona": "redator de documentos oficiais do Ministério Público", "publico": "o destinatário do ofício, que pode não ter formação jurídica", "tom": "formal", "objetivo": "Produzir a minuta de um ofício a partir dos dados que vou informar.", "contexto": "Destinatário: [ÓRGÃO OU PESSOA, COM CARGO]\nAssunto: [ASSUNTO EM UMA LINHA]\nFinalidade: [O QUE SE PEDE OU SE COMUNICA]\nFundamento: [DISPOSITIVO LEGAL OU PROCEDIMENTO, SE HOUVER]\nPrazo: [PRAZO PARA RESPOSTA, SE HOUVER]", "material": "", "restrito": false, "citarOrigem": false, "formato": "corrido", "secoes": "Parágrafos curtos, numerados quando houver mais de um pedido", "extensao": "No máximo uma página", "restricoes": "Não inventar número de processo, dispositivo legal ou data.\nDeixar entre colchetes qualquer informação que faltar.\nSem adjetivos desnecessários.", "incerteza": "perguntar", "passoAPasso": false, "criterio": "A minuta pode ir para revisão sem que eu precise reescrever a estrutura.", "exemplo": ""}},
+{"grupo": "Redação", "nome": "Revisão de texto", "v": {"persona": "revisor de textos jurídicos", "publico": "leitores com formação jurídica", "tom": "formal", "objetivo": "Revisar um texto para clareza, coesão e concisão, preservando o sentido.", "contexto": "O texto abaixo é meu e vai circular internamente.", "material": "[COLE AQUI O TEXTO A REVISAR]", "restrito": true, "citarOrigem": false, "formato": "corrido", "secoes": "Texto revisado; O que mudou e por quê; Trechos ambíguos", "extensao": "", "restricoes": "Não alterar sentido jurídico, nomes, números, datas nem citações.\nNão cortar informação: apontar o que parece dispensável em vez de remover.", "incerteza": "sinalizar", "passoAPasso": false, "criterio": "O texto ficou mais claro e eu consigo ver exatamente o que mudou.", "exemplo": ""}},
+{"grupo": "Redação", "nome": "Explicação em linguagem simples", "v": {"persona": "especialista em linguagem clara aplicada ao direito", "publico": "[QUEM VAI LER: por exemplo, a parte interessada, um adolescente, a imprensa]", "tom": "acolhedor", "objetivo": "Reescrever um texto técnico para quem não é da área entender.", "contexto": "Este texto será entregue a pessoas sem formação jurídica.", "material": "[COLE AQUI O TEXTO TÉCNICO]", "restrito": true, "citarOrigem": false, "formato": "topicos", "secoes": "Um parágrafo de abertura; tópicos curtos; glossário ao final", "extensao": "Metade do tamanho do original, no máximo", "restricoes": "Frases curtas e voz ativa.\nSem latim e sem sigla não explicada.\nSe simplificar mudar o sentido, manter o termo técnico e explicá-lo.", "incerteza": "sinalizar", "passoAPasso": false, "criterio": "Uma pessoa sem formação jurídica entende o que aconteceu e o que precisa fazer.", "exemplo": ""}},
+{"grupo": "Organização de informação", "nome": "Extração de dados para tabela", "v": {"persona": "apoio de estruturação de dados", "publico": "uso interno, para planilha", "tom": "neutro", "objetivo": "Transformar um texto corrido em tabela, para eu levar a uma planilha.", "contexto": "Preciso consolidar em tabela as informações dispersas no texto abaixo.", "material": "", "restrito": true, "citarOrigem": true, "formato": "tabela", "secoes": "[LISTE AS COLUNAS: por exemplo, nome, documento, data, valor, situação]", "extensao": "", "restricoes": "Copiar os valores exatamente como aparecem, sem padronizar grafia nem formato.\nDeixar a célula vazia quando o dado não constar, sem preencher por dedução.\nUma linha por registro.", "incerteza": "naoconsta", "passoAPasso": false, "criterio": "Posso colar a tabela na planilha sem precisar conferir célula por célula.", "exemplo": ""}},
+{"grupo": "Organização de informação", "nome": "Roteiro de perguntas", "v": {"persona": "apoio na preparação de entrevistas e oitivas", "publico": "quem vai conduzir a conversa", "tom": "neutro", "objetivo": "Montar um roteiro de perguntas sobre um tema, a partir do material que vou fornecer.", "contexto": "Objetivo da conversa: [O QUE SE PRETENDE ESCLARECER]\nQuem responde: [PERFIL DA PESSOA]\nTempo disponível: [DURAÇÃO APROXIMADA]", "material": "[COLE AQUI O MATERIAL DE APOIO]", "restrito": true, "citarOrigem": false, "formato": "numerada", "secoes": "Blocos temáticos; Perguntas de aprofundamento", "extensao": "", "restricoes": "Uma pergunta por vez, sem embutir duas perguntas na mesma frase.\nSem perguntas que sugiram a resposta.\nPerguntas abertas.", "incerteza": "", "passoAPasso": false, "criterio": "Consigo conduzir a conversa inteira seguindo o roteiro, sem esquecer pontos.", "exemplo": ""}},
+{"grupo": "Apoio ao estudo", "nome": "Pontos frágeis de um argumento", "v": {"persona": "revisor crítico, encarregado de encontrar falhas antes que outra pessoa as encontre", "publico": "eu mesmo, para preparar a sustentação", "tom": "direto", "objetivo": "Submeter minha tese a crítica e descobrir onde ela é frágil.", "contexto": "Vou sustentar o argumento abaixo e quero saber o que pode ser atacado.", "material": "[COLE AQUI O ARGUMENTO OU A TESE]", "restrito": true, "citarOrigem": false, "formato": "topicos", "secoes": "Reconstrução do argumento; Pontos frágeis; Contra-argumentos previsíveis; O que fortaleceria", "extensao": "", "restricoes": "Criticar o argumento, não a redação.\nNão inventar precedente, número de processo nem dispositivo legal.\nNão concordar por educação: se o argumento for bom, diga, mas justifique.", "incerteza": "naoconsta", "passoAPasso": true, "criterio": "Saio sabendo os três ataques mais prováveis à minha tese.", "exemplo": ""}},
+{"grupo": "Apoio ao estudo", "nome": "Estudo de um tema novo", "v": {"persona": "professor que organiza roteiros de estudo", "publico": "eu, que estou começando neste tema", "tom": "didatico", "objetivo": "Montar um roteiro para eu estudar um tema do zero.", "contexto": "Tema: [TEMA A ESTUDAR]\nMeu ponto de partida: [O QUE JÁ SEI SOBRE O ASSUNTO]", "material": "", "restrito": false, "citarOrigem": false, "formato": "topicos", "secoes": "O básico; Como o tema se organiza; Pontos de consenso; Pontos controversos; Perguntas que eu deveria saber responder", "extensao": "", "restricoes": "Separar claramente o que é consenso do que é disputado.\nMarcar cada norma ou decisão citada com \"conferir na fonte oficial\".", "incerteza": "sinalizar", "passoAPasso": false, "criterio": "Termino com um caminho de estudo e sei o que ainda preciso verificar.", "exemplo": ""}}
   ];
 
-  var elTexto     = document.getElementById("texto");
-  var elArquivo   = document.getElementById("arquivo");
-  var elLimpar    = document.getElementById("limparTexto");
-  var elJanelas   = document.getElementById("janelas");
-  var elPartes    = document.getElementById("partes");
-  var elDividir   = document.getElementById("dividir");
-  var elTamParte  = document.getElementById("tamParte");
+  var TELAS = ["inicio", "papel", "objetivo", "material", "formato", "regras", "exemplo", "resultado"];
+  var TOTAL_PERGUNTAS = 6; /* papel..exemplo */
+
+  var TOM_LABELS = {
+    formal: "formal e institucional",
+    neutro: "neutro e objetivo",
+    didatico: "didático e simples",
+    direto: "direto e crítico",
+    acolhedor: "acolhedor"
+  };
+  var FORMATO_LABELS = {
+    corrido: "texto corrido",
+    topicos: "tópicos",
+    tabela: "tabela",
+    numerada: "lista numerada",
+    passoapasso: "passo a passo",
+    json: "JSON"
+  };
+
   var elScroller  = document.getElementById("scroller");
-  var elVoltar    = document.getElementById("voltarTopo");
-  var recArquivo  = document.getElementById("recadoArquivo");
-  var recDividir  = document.getElementById("recadoDividir");
+  var elVoltarTopo= document.getElementById("voltarTopo");
+  var elProgresso = document.getElementById("progresso");
+  var elProgRotulo= document.getElementById("progressoRotulo");
+  var elPreenche  = document.getElementById("preencheProgresso");
+  var elPular     = document.getElementById("pularResultado");
+  var elNav       = document.getElementById("navegacao");
+  var btVoltar    = document.getElementById("btVoltar");
+  var btContinuar = document.getElementById("btContinuar");
+  var elRecado    = document.getElementById("recado");
+  var elContador  = document.getElementById("contadorDiscreto");
+  var elPredef    = document.getElementById("predefinicoes");
+
+  var fPersona = document.getElementById("fPersona");
+  var fPublico = document.getElementById("fPublico");
+  var fTom = document.getElementById("fTom");
+  var fTomOutro = document.getElementById("fTomOutro");
+  var fObjetivo = document.getElementById("fObjetivo");
+  var fContexto = document.getElementById("fContexto");
+  var fMaterial = document.getElementById("fMaterial");
+  var fRestrito = document.getElementById("fRestrito");
+  var fCitarOrigem = document.getElementById("fCitarOrigem");
+  var fFormato = document.getElementById("fFormato");
+  var fFormatoOutro = document.getElementById("fFormatoOutro");
+  var fSecoes = document.getElementById("fSecoes");
+  var fExtensao = document.getElementById("fExtensao");
+  var fRestricoes = document.getElementById("fRestricoes");
+  var fIncerteza = document.getElementById("fIncerteza");
+  var fIncertezaOutro = document.getElementById("fIncertezaOutro");
+  var fPassoAPasso = document.getElementById("fPassoAPasso");
+  var fCriterio = document.getElementById("fCriterio");
+  var fExemplo = document.getElementById("fExemplo");
+  var fResultado = document.getElementById("fResultado");
 
   var reduzir = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var indiceAtual = 0;
+  var resultadoEditadoManualmente = false;
+  var programatico = false;
 
-  function num(n){ return n.toLocaleString("pt-BR"); }
-
-  function tokens(txt){
-    var c = txt.length;
-    return { centro: Math.round(c / CAR_POR_TOKEN),
-             min: Math.round(c / CAR_MAX),
-             max: Math.round(c / CAR_MIN) };
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+                    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   }
 
-  function palavras(txt){
-    var t = txt.trim();
-    return t ? t.split(/\s+/).length : 0;
+  function maisProximo(alvo, seletor){
+    var n = alvo;
+    while(n && n.nodeType === 1){
+      if(n.matches && n.matches(seletor)) return n;
+      n = n.parentElement;
+    }
+    return null;
   }
 
-  function recado(el, txt){
-    el.textContent = txt;
-    el.classList.add("ver");
-    setTimeout(function(){ el.classList.remove("ver"); }, 2600);
+  var timerRecado = null;
+  function recado(txt){
+    elRecado.textContent = txt;
+    elRecado.classList.add("ver");
+    if(timerRecado) clearTimeout(timerRecado);
+    timerRecado = setTimeout(function(){ elRecado.classList.remove("ver"); }, 3200);
   }
 
-  (function montarJanelas(){
-    var html = "";
-    JANELAS.forEach(function(j, i){
-      html += '<div class="janela">' +
-                '<div class="topo-linha"><span class="nome">' + j.nome + '</span>' +
-                '<span class="pct" id="pct' + i + '">0%</span></div>' +
-                '<div class="trilho"><div class="preenche" id="bar' + i + '"></div></div>' +
-              "</div>";
-    });
-    elJanelas.innerHTML = html;
-  })();
+  /* ================= Campos ================= */
 
-  function atualizar(){
-    var txt = elTexto.value;
-    var tk = tokens(txt);
-    var p = palavras(txt);
+  function atualizarVisibilidadeOutros(){
+    fTomOutro.hidden = (fTom.value !== "outro");
+    fFormatoOutro.hidden = (fFormato.value !== "outro");
+    fIncertezaOutro.hidden = (fIncerteza.value !== "personalizado");
+  }
+  fTom.addEventListener("change", atualizarVisibilidadeOutros);
+  fFormato.addEventListener("change", atualizarVisibilidadeOutros);
+  fIncerteza.addEventListener("change", atualizarVisibilidadeOutros);
 
-    document.getElementById("vTokens").textContent = num(tk.centro);
-    document.getElementById("vFaixa").textContent = "entre " + num(tk.min) + " e " + num(tk.max);
-    document.getElementById("vCar").textContent = num(txt.length);
-    document.getElementById("vPal").textContent = num(p);
-    document.getElementById("vPag").textContent = num(Math.round(txt.length / 2000 * 10) / 10);
-    document.getElementById("vLeitura").textContent = num(Math.max(p ? 1 : 0, Math.round(p / 200)));
-
-    JANELAS.forEach(function(j, i){
-      var pct = j.limite ? (tk.centro / j.limite) * 100 : 0;
-      var bar = document.getElementById("bar" + i);
-      bar.style.width = Math.min(100, pct) + "%";
-      bar.className = "preenche" + (pct > 100 ? " estoura" : (pct > 70 ? " apertado" : ""));
-      document.getElementById("pct" + i).textContent =
-        pct > 100 ? "não cabe" : (pct < 1 && pct > 0 ? "menos de 1%" : Math.round(pct) + "%");
-    });
+  function tomLegivel(){
+    var v = fTom.value;
+    if(!v) return "";
+    if(v === "outro") return fTomOutro.value.trim();
+    return TOM_LABELS[v] || "";
+  }
+  function formatoLegivel(){
+    var v = fFormato.value;
+    if(!v) return "";
+    if(v === "outro") return fFormatoOutro.value.trim();
+    return FORMATO_LABELS[v] || "";
+  }
+  function fraseIncerteza(){
+    var v = fIncerteza.value;
+    if(v === "naoconsta") return "Se alguma informação não estiver disponível, diga isso claramente (por exemplo, \"não consta no material\"), em vez de completar por conta própria.";
+    if(v === "sinalizar") return "Se precisar presumir algo, sinalize claramente a suposição, sem apresentá-la como fato.";
+    if(v === "perguntar") return "Se faltar alguma informação essencial para responder bem, pergunte antes de continuar.";
+    if(v === "personalizado") return fIncertezaOutro.value.trim();
+    return "";
   }
 
-  function dividir(){
-    var txt = elTexto.value.trim();
-    elPartes.innerHTML = "";
-    if(!txt){ recado(recDividir, "Cole um texto primeiro."); return; }
-
-    var alvo = parseInt(elTamParte.value, 10);
-    if(!alvo || alvo < 200) alvo = 2000;
-    var limiteCar = alvo * CAR_POR_TOKEN;
-
-    var blocos = txt.split(/\n\s*\n/);
-    var partes = [], atual = "";
-    blocos.forEach(function(b){
-      b = b.trim();
-      if(!b) return;
-      if(atual && (atual.length + b.length + 2) > limiteCar){ partes.push(atual); atual = b; }
-      else { atual = atual ? atual + "\n\n" + b : b; }
-      /* um paragrafo sozinho maior que o limite vira parte propria */
-      while(atual.length > limiteCar * 1.4){
-        partes.push(atual.slice(0, Math.floor(limiteCar)));
-        atual = atual.slice(Math.floor(limiteCar));
-      }
-    });
-    if(atual) partes.push(atual);
-
-    var html = "";
-    partes.forEach(function(p, i){
-      var tk = tokens(p);
-      html += '<div class="parte">' +
-                '<div class="parte-cab">' +
-                  '<span class="titulo-parte">Parte ' + (i+1) + " de " + partes.length + "</span>" +
-                  '<span class="qtd">' + num(tk.centro) + " tokens estimados</span>" +
-                  '<button type="button" class="bt" data-parte="' + i + '">Selecionar para copiar</button>' +
-                "</div>" +
-                '<textarea rows="4" readonly id="parte' + i + '"></textarea>' +
-              "</div>";
-    });
-    elPartes.innerHTML = html;
-    partes.forEach(function(p, i){ document.getElementById("parte" + i).value = p; });
-    recado(recDividir, partes.length + (partes.length === 1 ? " parte gerada" : " partes geradas"));
+  function lerCampos(){
+    return {
+      persona: fPersona.value.trim(),
+      publico: fPublico.value.trim(),
+      tom: tomLegivel(),
+      objetivo: fObjetivo.value.trim(),
+      contexto: fContexto.value.trim(),
+      material: fMaterial.value.trim(),
+      restrito: fRestrito.checked,
+      citarOrigem: fCitarOrigem.checked,
+      formato: formatoLegivel(),
+      secoes: fSecoes.value.trim(),
+      extensao: fExtensao.value.trim(),
+      restricoes: fRestricoes.value,
+      incertezaFrase: fraseIncerteza(),
+      passoAPasso: fPassoAPasso.checked,
+      criterio: fCriterio.value.trim(),
+      exemplo: fExemplo.value.trim()
+    };
   }
 
-  elPartes.addEventListener("click", function(ev){
-    var b = ev.target.closest ? ev.target.closest("[data-parte]") : null;
-    if(!b) return;
-    var ta = document.getElementById("parte" + b.getAttribute("data-parte"));
-    ta.focus(); ta.select();
+  function limparCampos(){
+    [fPersona, fPublico, fObjetivo, fContexto, fMaterial, fSecoes, fExtensao,
+     fRestricoes, fCriterio, fExemplo, fTomOutro, fFormatoOutro, fIncertezaOutro]
+      .forEach(function(el){ el.value = ""; });
+    [fRestrito, fCitarOrigem, fPassoAPasso].forEach(function(el){ el.checked = false; });
+    [fTom, fFormato, fIncerteza].forEach(function(el){ el.value = ""; });
+    atualizarVisibilidadeOutros();
+  }
+
+  function aplicarPreset(v){
+    fPersona.value = v.persona || "";
+    fPublico.value = v.publico || "";
+    fTom.value = v.tom || "";
+    fTomOutro.value = "";
+    fObjetivo.value = v.objetivo || "";
+    fContexto.value = v.contexto || "";
+    fMaterial.value = v.material || "";
+    fRestrito.checked = !!v.restrito;
+    fCitarOrigem.checked = !!v.citarOrigem;
+    fFormato.value = v.formato || "";
+    fFormatoOutro.value = "";
+    fSecoes.value = v.secoes || "";
+    fExtensao.value = v.extensao || "";
+    fRestricoes.value = v.restricoes || "";
+    fIncerteza.value = v.incerteza || "";
+    fIncertezaOutro.value = "";
+    fPassoAPasso.checked = !!v.passoAPasso;
+    fCriterio.value = v.criterio || "";
+    fExemplo.value = v.exemplo || "";
+    atualizarVisibilidadeOutros();
+  }
+
+  /* ================= Geracao do Markdown ================= */
+
+  function bloco(titulo, corpo){
+    return corpo ? ("## " + titulo + "\n" + corpo + "\n\n") : "";
+  }
+  function bullets(linhas){
+    return linhas.filter(Boolean).map(function(l){ return "- " + l; }).join("\n");
+  }
+
+  function montarMarkdown(c){
+    var md = "";
+
+    if(c.persona) md += bloco("Papel", "Você atua como " + c.persona + ".");
+    if(c.objetivo) md += bloco("Objetivo", c.objetivo);
+    if(c.contexto) md += bloco("Contexto", c.contexto);
+
+    var pt = "";
+    if(c.publico && c.tom) pt = "Escreva para " + c.publico + ", em tom " + c.tom + ".";
+    else if(c.publico) pt = "Escreva para " + c.publico + ".";
+    else if(c.tom) pt = "Escreva em tom " + c.tom + ".";
+    if(pt) md += bloco("Público e tom", pt);
+
+    if(c.material) md += bloco("Material", c.material);
+    else if(c.restrito || c.citarOrigem) md += bloco("Material", "[COLE AQUI O TEXTO, DOCUMENTO OU DADO]");
+
+    var fontes = [];
+    if(c.restrito) fontes.push("Baseie-se apenas no material fornecido, sem completar com conhecimento geral.");
+    if(c.citarOrigem) fontes.push("Indique, para cada informação relevante, de onde ela veio.");
+    if(fontes.length) md += bloco("Fontes", bullets(fontes));
+
+    var fmt = [];
+    if(c.formato) fmt.push("Formato: " + c.formato + ".");
+    if(c.secoes) fmt.push("Estrutura: " + c.secoes + ".");
+    if(c.extensao) fmt.push("Extensão: " + c.extensao + ".");
+    if(fmt.length) md += bloco("Formato da resposta", bullets(fmt));
+
+    var regras = String(c.restricoes || "").split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+    if(c.incertezaFrase) regras.push(c.incertezaFrase);
+    if(c.passoAPasso) regras.push("Explique o raciocínio, passo a passo, antes de apresentar a resposta final.");
+    if(regras.length) md += bloco("Regras", bullets(regras));
+
+    if(c.criterio) md += bloco("Como avaliar o resultado", c.criterio);
+    if(c.exemplo) md += bloco("Exemplo", c.exemplo);
+
+    return md.trim();
+  }
+
+  function montarModeloBranco(){
+    return [
+      "## Papel",
+      "Você atua como [PAPEL OU PERSONA].",
+      "",
+      "## Objetivo",
+      "[O QUE VOCÊ QUER QUE A IA FAÇA]",
+      "",
+      "## Contexto",
+      "[INFORMAÇÃO DE FUNDO QUE A IA PRECISA SABER]",
+      "",
+      "## Público e tom",
+      "Escreva para [PÚBLICO], em tom [TOM DE VOZ].",
+      "",
+      "## Material",
+      "[COLE AQUI O TEXTO, DOCUMENTO OU DADO]",
+      "",
+      "## Fontes",
+      "- Baseie-se apenas no material fornecido, sem completar com conhecimento geral.",
+      "- Indique, para cada informação relevante, de onde ela veio.",
+      "",
+      "## Formato da resposta",
+      "- Formato: [texto corrido, tópicos, tabela, lista numerada, passo a passo, JSON...]",
+      "- Estrutura: [seções ou tópicos esperados]",
+      "- Extensão: [limite de tamanho, se houver]",
+      "",
+      "## Regras",
+      "- [O QUE A IA NÃO DEVE FAZER]",
+      "- Se faltar informação, [diga que não sabe, sinalize a suposição, ou pergunte antes de responder].",
+      "",
+      "## Como avaliar o resultado",
+      "[COMO VOCÊ VAI SABER QUE A RESPOSTA ESTÁ BOA]",
+      "",
+      "## Exemplo",
+      "[COLE UM EXEMPLO DO RESULTADO ESPERADO, SE TIVER]"
+    ].join("\n");
+  }
+
+  /* ================= Contador discreto ================= */
+
+  var CAR_POR_TOKEN = 3.7;
+  function atualizarContadorDiscreto(){
+    var n = Math.round(fResultado.value.length / CAR_POR_TOKEN);
+    elContador.textContent = "~" + n.toLocaleString("pt-BR") + (n === 1 ? " token (estimativa)" : " tokens (estimativa)");
+  }
+
+  function definirResultado(md){
+    programatico = true;
+    fResultado.value = md;
+    programatico = false;
+    resultadoEditadoManualmente = false;
+    atualizarContadorDiscreto();
+  }
+
+  fResultado.addEventListener("input", function(){
+    if(programatico) return;
+    resultadoEditadoManualmente = true;
+    atualizarContadorDiscreto();
+  });
+
+  function gerarResultado(){
+    if(resultadoEditadoManualmente){
+      var ok = window.confirm("Isso substitui o texto que você editou manualmente pelo gerado a partir das respostas do formulário. Continuar?");
+      if(!ok) return;
+    }
+    var md = montarMarkdown(lerCampos());
+    if(!md){
+      md = montarModeloBranco();
+      recado("Nenhum campo foi preenchido; aqui está um modelo em branco para editar.");
+    }
+    definirResultado(md);
+  }
+
+  /* ================= Copia ================= */
+
+  function copiaTexto(txt, ok){
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:absolute;left:-9999px;top:0;";
+    document.body.appendChild(ta);
+    ta.select();
     var copiou = false;
     try{ copiou = document.execCommand("copy"); }catch(e){}
-    b.textContent = copiou ? "Copiado" : "Selecionado, use Ctrl+C";
-    setTimeout(function(){ b.textContent = "Selecionar para copiar"; }, 2600);
+    document.body.removeChild(ta);
+    recado(copiou ? ok : "Não foi possível copiar. Selecione o texto e use Ctrl+C.");
+  }
+
+  document.getElementById("copiarResultado").addEventListener("click", function(){
+    if(!fResultado.value.trim()){ recado("Não há texto para copiar."); return; }
+    copiaTexto(fResultado.value, "Markdown copiado. Cole na página Editor de Markdown ou direto na ferramenta de IA.");
+  });
+  document.getElementById("atualizarResultado").addEventListener("click", gerarResultado);
+  document.getElementById("reiniciar").addEventListener("click", function(){
+    var ok = window.confirm("Isso apaga todas as respostas preenchidas e volta ao início. Continuar?");
+    if(!ok) return;
+    limparCampos();
+    definirResultado("");
+    mostrarTela("inicio");
   });
 
-  elTexto.addEventListener("input", atualizar);
-  elLimpar.addEventListener("click", function(){
-    elTexto.value = ""; elPartes.innerHTML = "";
-    atualizar(); elTexto.focus();
-  });
-  elDividir.addEventListener("click", dividir);
+  /* ================= Predefinicoes ================= */
 
-  elArquivo.addEventListener("change", function(){
-    var f = elArquivo.files && elArquivo.files[0];
-    if(!f) return;
-    var leitor = new FileReader();
-    leitor.onload = function(){
-      elTexto.value = String(leitor.result || "");
-      atualizar();
-      recado(recArquivo, f.name + " carregado");
-    };
-    leitor.onerror = function(){ recado(recArquivo, "Não foi possível ler o arquivo."); };
-    leitor.readAsText(f, "utf-8");
-    elArquivo.value = "";
+  (function montarPredefinicoes(){
+    var grupos = {}, ordem = [];
+    PRESETS.forEach(function(p){
+      if(!grupos[p.grupo]){ grupos[p.grupo] = []; ordem.push(p.grupo); }
+      grupos[p.grupo].push(p);
+    });
+    var html = "";
+    ordem.forEach(function(g){
+      html += '<div class="grupo-predef"><span class="rotulo-predef">' + esc(g) + '</span><div class="linha-predef">';
+      grupos[g].forEach(function(p){
+        html += '<button type="button" class="predef" data-preset="' + PRESETS.indexOf(p) + '">' + esc(p.nome) + "</button>";
+      });
+      html += "</div></div>";
+    });
+    elPredef.innerHTML = html;
+  })();
+
+  elPredef.addEventListener("click", function(ev){
+    var b = maisProximo(ev.target, ".predef");
+    if(!b) return;
+    var p = PRESETS[parseInt(b.getAttribute("data-preset"), 10)];
+    if(!p) return;
+    aplicarPreset(p.v);
+    recado('Preenchido a partir de "' + p.nome + '". Ajuste o que quiser em cada tela.');
+    mostrarTela("papel");
+  });
+
+  document.getElementById("comecarGuiado").addEventListener("click", function(){
+    mostrarTela("papel");
+  });
+  document.getElementById("comecarBranco").addEventListener("click", function(){
+    definirResultado(montarModeloBranco());
+    recado("Modelo em branco pronto para editar.");
+    mostrarTela("resultado");
+  });
+
+  /* ================= Navegacao entre telas ================= */
+
+  function rolarTopo(){
+    if(elScroller.scrollTo){
+      try{ elScroller.scrollTo({ top: 0, behavior: reduzir ? "auto" : "smooth" }); return; }catch(e){}
+    }
+    elScroller.scrollTop = 0;
+  }
+
+  function mostrarTela(id){
+    TELAS.forEach(function(t){
+      document.querySelector('.tela[data-tela="' + t + '"]').hidden = (t !== id);
+    });
+    indiceAtual = TELAS.indexOf(id);
+
+    var ehInicio = (id === "inicio");
+    var ehResultado = (id === "resultado");
+
+    /* No resultado a nav continua visivel, so para o Voltar: e o unico
+       jeito de retornar ao Exemplo e ajustar as respostas. */
+    elNav.hidden = ehInicio;
+    btContinuar.hidden = ehResultado;
+    if(!ehInicio && !ehResultado){
+      btContinuar.textContent = (id === "exemplo") ? "Ver resultado" : "Continuar";
+    }
+
+    elProgresso.hidden = ehInicio;
+    elPular.hidden = ehInicio || ehResultado;
+    if(!ehInicio){
+      if(ehResultado){
+        elProgRotulo.textContent = "Resultado pronto";
+        elPreenche.style.width = "100%";
+      } else {
+        elProgRotulo.textContent = "Pergunta " + indiceAtual + " de " + TOTAL_PERGUNTAS;
+        elPreenche.style.width = (indiceAtual / TOTAL_PERGUNTAS * 100) + "%";
+      }
+    }
+
+    rolarTopo();
+  }
+
+  btVoltar.addEventListener("click", function(){
+    mostrarTela(TELAS[Math.max(0, indiceAtual - 1)]);
+  });
+  btContinuar.addEventListener("click", function(){
+    if(TELAS[indiceAtual] === "exemplo"){
+      gerarResultado();
+      mostrarTela("resultado");
+    } else {
+      mostrarTela(TELAS[Math.min(TELAS.length - 1, indiceAtual + 1)]);
+    }
+  });
+  elPular.addEventListener("click", function(){
+    gerarResultado();
+    mostrarTela("resultado");
   });
 
   elScroller.addEventListener("scroll", function(){
-    if(elScroller.scrollTop > 240) elVoltar.classList.add("visivel");
-    else elVoltar.classList.remove("visivel");
+    if(elScroller.scrollTop > 240) elVoltarTopo.classList.add("visivel");
+    else elVoltarTopo.classList.remove("visivel");
   });
-  elVoltar.addEventListener("click", function(){
-    if(elScroller.scrollTo){
-      try{ elScroller.scrollTo({ top:0, behavior: reduzir ? "auto" : "smooth" }); return; }catch(e){}
-    }
-    elScroller.scrollTop = 0;
+  elVoltarTopo.addEventListener("click", function(){
+    rolarTopo();
   });
 
-  atualizar();
+  atualizarVisibilidadeOutros();
+  mostrarTela("inicio");
 })();
 </script>
 </body>

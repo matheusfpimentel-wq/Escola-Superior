@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Editor de Markdown e modelos de prompt | Escola Superior do MPPR</title>
+<title>Editor de Markdown | Escola Superior do MPPR</title>
 <style>
   /* ====== Tipografia institucional (Futura, embutida) ====== */
   @font-face{
@@ -302,6 +302,58 @@
     box-shadow:0 0 0 3px rgba(62,81,155,.16);
   }
 
+  input[type="text"], input[type="number"], select{
+    width:100%;
+    border:1px solid #C6CEDA;
+    border-radius:var(--raio);
+    padding:9px 11px;
+    font-family:var(--texto);
+    font-size:.92rem;
+    color:var(--tinta);
+    background:var(--branco);
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus{
+    outline:none;
+    border-color:var(--azul);
+    box-shadow:0 0 0 3px rgba(62,81,155,.16);
+  }
+
+  .escolha{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  }
+  .escolha select, .escolha input{flex:1 1 240px; min-width:0; width:auto;}
+
+  .oculto-visual{
+    position:absolute;
+    width:1px; height:1px; margin:-1px; padding:0; border:0;
+    clip:rect(0 0 0 0); clip-path:inset(50%);
+    overflow:hidden; white-space:nowrap;
+  }
+
+  .opcao{
+    display:flex; align-items:flex-start; gap:9px;
+    padding:9px 10px;
+    border:1px solid var(--linha);
+    border-radius:var(--raio);
+    cursor:pointer;
+    margin:0 0 7px;
+  }
+  .opcao:hover{border-color:#C6CEDA; background:#FAFBFD;}
+  .opcao input[type="checkbox"]{
+    flex:0 0 auto;
+    width:17px; height:17px;
+    margin:2px 0 0;
+    accent-color:var(--azul);
+  }
+  .opcao .txt{font-size:.9rem; color:var(--tinta); line-height:1.45;}
+  .opcao .txt b{color:var(--navy);}
+
+  .contador-discreto{
+    margin:8px 0 0;
+    font-size:.76rem;
+    color:var(--cinza);
+  }
+
   .barra{
     display:flex; flex-wrap:wrap; align-items:center; gap:8px;
     margin-top:10px;
@@ -321,6 +373,10 @@
   .bt-fantasma:hover{border-color:#C6CEDA; color:var(--navy);}
   .bt[disabled]{opacity:.45; cursor:default;}
   .bt[disabled]:hover{border-color:#C6CEDA; color:var(--texto-2);}
+  /* .bt fixa display:inline-flex, o que por si so venceria a regra [hidden]
+     do navegador (origem "autor" sempre supera "user-agent"); sem este
+     reforco, esconder um botao .bt via JS (el.hidden = true) nao funciona. */
+  .bt[hidden]{display:none;}
 
   .aviso{
     margin:0; padding:9px 12px;
@@ -454,23 +510,6 @@
   .previa th{background:#F2F5F9; font-family:var(--titulo); font-weight:600; color:var(--navy);}
   .previa .vazio-previa{color:var(--cinza); font-style:italic;}
 
-  /* ====== Modelos ====== */
-  .escolha{
-    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
-  }
-  select{
-    flex:1 1 240px; min-width:0;
-    border:1px solid #C6CEDA; border-radius:var(--raio);
-    background:var(--branco); color:var(--tinta);
-    font-family:var(--texto); font-size:.92rem;
-    padding:9px 10px;
-  }
-  select:focus{outline:none; border-color:var(--azul); box-shadow:0 0 0 3px rgba(62,81,155,.16);}
-  .descricao-modelo{
-    margin:9px 0 0; font-size:.86rem; color:var(--texto-2);
-    padding-left:11px; border-left:3px solid var(--linha);
-  }
-
   @media (max-width:760px){
     .panes{grid-template-columns:1fr; height:clamp(300px, 52vh, 560px);}
     .pane + .pane{border-left:0; border-top:1px solid var(--linha);}
@@ -550,7 +589,7 @@
         <div class="divisor" aria-hidden="true"></div>
         <div class="unidade">Escola Superior</div>
       </div>
-      <h1><span class="leve">Editor de</span>Markdown e prompts</h1>
+      <h1><span class="leve">Editor de</span>Markdown</h1>
     </div>
   </header>
 
@@ -604,23 +643,15 @@
           <button type="button" class="bt bt-fantasma direita" id="limparTudo">Limpar</button>
           <span class="recado" id="recado" role="status" aria-live="polite"></span>
         </div>
+        <p class="contador-discreto" id="contadorDiscreto">~0 tokens (estimativa)</p>
         <p class="nota">"Copiar formatado" leva negrito, títulos, listas e tabelas para o editor de destino. "Copiar Markdown" leva o texto com os sinais, do jeito que está à esquerda. "Tirar os sinais" limpa a marcação e deixa texto corrido.</p>
       </section>
 
-      <section class="painel">
-        <h2>Modelos de prompt</h2>
-        <p class="ajuda">Escolha um modelo, insira no editor e substitua os trechos entre colchetes. Os modelos são escritos em Markdown porque as ferramentas de IA leem bem essa estrutura.</p>
-        <div class="escolha">
-          <label class="rotulo" for="modelo" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;">Modelo de prompt</label>
-          <select id="modelo"></select>
-          <button type="button" class="bt bt-forte" id="inserirModelo">Inserir no editor</button>
-        </div>
-        <p class="descricao-modelo" id="descricaoModelo"></p>
-      </section>
-
       <p class="aviso">
-        <b>O que sai daqui ainda precisa de conferência.</b> Modelo de prompt melhora a pergunta, não garante a resposta:
+        <b>O que sai daqui ainda precisa de conferência.</b> Formatar bem um prompt melhora a pergunta, não garante a resposta:
         confira fatos, citações e referências legais em fonte oficial antes de usar o conteúdo.
+        Para montar um prompt do zero, com perguntas guiadas sobre papel, tom, objetivo e formato, use a página
+        <b>Prompt Guiado</b> e depois cole o resultado aqui para ajustar.
       </p>
 
     </div>
@@ -646,27 +677,21 @@
 (function(){
   "use strict";
 
-  var MODELOS = [
-{"grupo": "Análise de documentos", "nome": "Resumo de peça ou documento", "descricao": "Resume um documento longo em estrutura fixa, exigindo indicação de onde cada informação foi encontrada.", "texto": "## Papel\nVocê atua como apoio de análise documental em uma Promotoria de Justiça.\n\n## Tarefa\nResuma o documento abaixo na estrutura pedida, sem acrescentar informação que não esteja nele.\n\n## Estrutura da resposta\n1. **Do que se trata**: duas ou três linhas.\n2. **Partes envolvidas**: quem é quem no documento.\n3. **Fatos relevantes**: em tópicos, na ordem em que ocorreram.\n4. **Pedidos ou providências**: o que se requer ou se determina.\n5. **Prazos e datas**: todos os que aparecerem.\n6. **Pontos que ficaram obscuros**: o que o documento não esclarece.\n\n## Regras\n- Indique, entre parênteses, a página ou o trecho de onde tirou cada informação.\n- Não invente dados. Se algo não constar, escreva \"não consta no documento\".\n- Mantenha os nomes e números exatamente como estão no original.\n\n## Documento\n[COLE AQUI O TEXTO DO DOCUMENTO]"},
-{"grupo": "Análise de documentos", "nome": "Comparação entre dois documentos", "descricao": "Confronta duas versões ou duas manifestações e organiza convergências, divergências e omissões.", "texto": "## Tarefa\nCompare os dois documentos abaixo e organize o resultado em tabela.\n\n## Formato\n| Ponto analisado | Documento A | Documento B | Observação |\n| --- | --- | --- | --- |\n\nDepois da tabela, liste em tópicos:\n- **Convergências**: em que os documentos concordam.\n- **Divergências**: em que se contradizem, com o trecho de cada um.\n- **Omissões**: o que aparece em um e falta no outro.\n\n## Regras\n- Trate apenas do que está escrito nos documentos.\n- Se a divergência for de redação e não de conteúdo, diga isso.\n\n## Documento A\n[COLE AQUI O PRIMEIRO DOCUMENTO]\n\n## Documento B\n[COLE AQUI O SEGUNDO DOCUMENTO]"},
-{"grupo": "Análise de documentos", "nome": "Linha do tempo dos fatos", "descricao": "Extrai datas e eventos de um texto corrido e devolve uma cronologia em tabela.", "texto": "## Tarefa\nExtraia do texto abaixo todos os fatos com data ou referência temporal e monte uma linha do tempo.\n\n## Formato\n| Data | Fato | Fonte no texto |\n| --- | --- | --- |\n\n## Regras\n- Ordene da data mais antiga para a mais recente.\n- Datas aproximadas ou relativas, como \"no mês seguinte\", devem aparecer como estão, marcadas com \"(aproximada)\".\n- Ao final, liste os fatos relevantes que apareceram sem qualquer data.\n- Não deduza datas que não estejam no texto.\n\n## Texto\n[COLE AQUI O TEXTO]"},
-{"grupo": "Redação", "nome": "Minuta de ofício", "descricao": "Gera uma minuta de ofício a partir dos dados que você fornecer, em linguagem institucional.", "texto": "## Tarefa\nRedija a minuta de um ofício com os dados abaixo.\n\n## Dados\n- **Destinatário**: [ÓRGÃO OU PESSOA, COM CARGO]\n- **Assunto**: [ASSUNTO EM UMA LINHA]\n- **Finalidade**: [O QUE SE PEDE OU SE COMUNICA]\n- **Fundamento**: [DISPOSITIVO LEGAL OU PROCEDIMENTO, SE HOUVER]\n- **Prazo**: [PRAZO PARA RESPOSTA, SE HOUVER]\n\n## Formato\n- Linguagem formal, impessoal e direta.\n- Parágrafos curtos, numerados quando houver mais de um pedido.\n- Sem adjetivos desnecessários e sem citações que não foram fornecidas.\n\n## Regras\n- Deixe entre colchetes qualquer informação que faltar, em vez de preencher por conta própria.\n- Não invente número de processo, dispositivo legal ou data."},
-{"grupo": "Redação", "nome": "Revisão de texto", "descricao": "Revisa clareza, coesão e concisão mostrando o que mudou e por quê.", "texto": "## Tarefa\nRevise o texto abaixo para clareza, coesão e concisão, preservando o sentido e o registro formal.\n\n## Formato da resposta\n1. **Texto revisado**, pronto para uso.\n2. **O que mudou**: lista das alterações relevantes, cada uma com o motivo em poucas palavras.\n3. **Dúvidas**: trechos em que a intenção do autor ficou ambígua.\n\n## Regras\n- Não altere sentido jurídico, nomes, números, datas nem citações.\n- Não corte informação: se algo parecer dispensável, aponte na lista em vez de remover.\n- Mantenha a norma culta e evite jargão desnecessário.\n\n## Texto\n[COLE AQUI O TEXTO A REVISAR]"},
-{"grupo": "Redação", "nome": "Explicação em linguagem simples", "descricao": "Reescreve um texto técnico para quem não é da área, sem perder precisão.", "texto": "## Tarefa\nReescreva o texto abaixo para uma pessoa sem formação jurídica entender.\n\n## Público\n[QUEM VAI LER: por exemplo, a parte interessada, um adolescente, a imprensa]\n\n## Formato\n- Um parágrafo de abertura respondendo \"o que isso significa para mim\".\n- Tópicos curtos com o restante.\n- Um glossário ao final, com os termos técnicos que foram inevitáveis.\n\n## Regras\n- Frases curtas, voz ativa, sem latim e sem sigla não explicada.\n- Precisão vem antes de simplicidade: se simplificar mudar o sentido, mantenha o termo e explique.\n\n## Texto\n[COLE AQUI O TEXTO TÉCNICO]"},
-{"grupo": "Organização de informação", "nome": "Extração de dados para tabela", "descricao": "Transforma texto corrido em tabela com as colunas que você definir, pronta para planilha.", "texto": "## Tarefa\nExtraia do texto abaixo os dados pedidos e devolva em tabela.\n\n## Colunas\n[LISTE AS COLUNAS, POR EXEMPLO: nome, documento, data, valor, situação]\n\n## Formato\n- Uma linha por registro encontrado.\n- Célula vazia quando o dado não constar, sem preencher por dedução.\n- Depois da tabela, informe quantos registros foram encontrados.\n\n## Regras\n- Copie os valores exatamente como aparecem, sem padronizar grafia nem formato.\n- Aponte separadamente os registros em que houver dúvida ou informação conflitante.\n\n## Texto\n[COLE AQUI O TEXTO]"},
-{"grupo": "Organização de informação", "nome": "Roteiro de perguntas", "descricao": "Monta um roteiro de perguntas a partir de um tema e do material que você fornecer.", "texto": "## Tarefa\nMonte um roteiro de perguntas sobre o tema abaixo, a partir do material fornecido.\n\n## Contexto\n- **Objetivo**: [O QUE SE PRETENDE ESCLARECER]\n- **Quem responde**: [PERFIL DA PESSOA]\n- **Tempo disponível**: [DURAÇÃO APROXIMADA]\n\n## Formato\n- Perguntas abertas, agrupadas por assunto.\n- Cada pergunta em uma linha, numerada.\n- Ao final, cinco perguntas de aprofundamento para usar conforme as respostas.\n\n## Regras\n- Uma pergunta por vez, sem embutir duas perguntas na mesma frase.\n- Sem perguntas que sugiram a resposta.\n- Baseie as perguntas apenas no material fornecido.\n\n## Material\n[COLE AQUI O MATERIAL DE APOIO]"},
-{"grupo": "Apoio ao estudo", "nome": "Pontos frágeis de um argumento", "descricao": "Submete a sua própria tese a crítica, apontando lacunas e contra-argumentos.", "texto": "## Tarefa\nAnalise criticamente o argumento abaixo e aponte onde ele é frágil.\n\n## Formato\n1. **Reconstrução do argumento**: premissas e conclusão, em tópicos.\n2. **Pontos frágeis**: cada um com o motivo.\n3. **Contra-argumentos previsíveis**: o que a outra parte diria.\n4. **O que fortaleceria**: que prova, dado ou fundamento faltou.\n\n## Regras\n- Critique o argumento, não a redação.\n- Se precisar de norma ou jurisprudência que não foi fornecida, diga que precisa e não cite de memória.\n- Não invente precedente, número de processo nem dispositivo legal.\n\n## Argumento\n[COLE AQUI O ARGUMENTO OU A TESE]"},
-{"grupo": "Apoio ao estudo", "nome": "Estudo de um tema novo", "descricao": "Organiza um roteiro de estudo sobre um assunto, separando o que é consenso do que é controverso.", "texto": "## Tarefa\nMonte um roteiro de estudo sobre o tema abaixo.\n\n## Tema\n[TEMA A ESTUDAR]\n\n## Formato\n1. **O básico**: os conceitos que preciso dominar antes de tudo.\n2. **Como o tema se organiza**: as grandes divisões do assunto.\n3. **Pontos de consenso**.\n4. **Pontos controversos**: com as posições em disputa.\n5. **Perguntas que eu deveria conseguir responder** ao final do estudo.\n\n## Regras\n- Separe claramente o que é consenso do que é disputado.\n- Onde citar norma ou decisão, marque com \"conferir na fonte oficial\", porque vou verificar cada referência.\n- Diga explicitamente onde o seu conhecimento pode estar desatualizado."}
-  ];
-
   var elMd       = document.getElementById("md");
   var elPrevia   = document.getElementById("previa");
   var elPanes    = document.getElementById("panes");
-  var elModelo   = document.getElementById("modelo");
-  var elDescr    = document.getElementById("descricaoModelo");
   var elRecado   = document.getElementById("recado");
+  var elContador = document.getElementById("contadorDiscreto");
   var elScroller = document.getElementById("scroller");
   var elVoltar   = document.getElementById("voltarTopo");
+
+  /* Mesma heuristica do Estimador de tokens: 3,7 caracteres por token em
+     media, em portugues. Aqui o contador fica discreto, sem faixa. */
+  var CAR_POR_TOKEN = 3.7;
+  function atualizarContador(){
+    var n = Math.round(elMd.value.length / CAR_POR_TOKEN);
+    elContador.textContent = "~" + n.toLocaleString("pt-BR") + (n === 1 ? " token (estimativa)" : " tokens (estimativa)");
+  }
 
   var reduzir = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -821,6 +846,7 @@
     elPrevia.innerHTML = v.trim()
       ? paraHtml(v)
       : '<p class="vazio-previa">O texto formatado aparece aqui.</p>';
+    atualizarContador();
   }
 
   /* ================= Barra de ferramentas ================= */
@@ -942,43 +968,6 @@
     elMd.value = "";
     render();
     elMd.focus();
-  });
-
-  /* ================= Modelos ================= */
-
-  (function montarModelos(){
-    var grupos = {};
-    MODELOS.forEach(function(m, i){
-      (grupos[m.grupo] = grupos[m.grupo] || []).push({ m: m, i: i });
-    });
-    var html = "";
-    Object.keys(grupos).forEach(function(g){
-      html += '<optgroup label="' + esc(g) + '">';
-      grupos[g].forEach(function(o){
-        html += '<option value="' + o.i + '">' + esc(o.m.nome) + "</option>";
-      });
-      html += "</optgroup>";
-    });
-    elModelo.innerHTML = html;
-  })();
-
-  function mostrarDescricao(){
-    var m = MODELOS[parseInt(elModelo.value, 10)];
-    elDescr.textContent = m ? m.descricao : "";
-  }
-  elModelo.addEventListener("change", mostrarDescricao);
-  mostrarDescricao();
-
-  document.getElementById("inserirModelo").addEventListener("click", function(){
-    var m = MODELOS[parseInt(elModelo.value, 10)];
-    if(!m) return;
-    var atual = elMd.value.trim();
-    elMd.value = atual ? atual + "\n\n---\n\n" + m.texto : m.texto;
-    render();
-    elMd.focus();
-    elMd.selectionStart = elMd.selectionEnd = elMd.value.length;
-    if(elPanes.getAttribute("data-aba") === "ver") trocarAba("escrever");
-    recado("Modelo inserido no editor.");
   });
 
   /* ================= Abas, rolagem ================= */
