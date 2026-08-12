@@ -354,6 +354,33 @@
     color:var(--cinza);
   }
 
+  /* ====== Ajuda retraída atrás de um "?" ====== */
+  .cab-painel{
+    display:flex; align-items:center; gap:8px;
+    margin:0 0 11px;
+  }
+  .cab-painel > h2{margin:0;}
+  .ajuda-bt{
+    flex:0 0 auto;
+    width:20px; height:20px; padding:0;
+    border:1px solid #C6CEDA; border-radius:50%;
+    background:var(--branco); color:var(--cinza);
+    font-family:var(--titulo); font-weight:700; font-size:.72rem; line-height:1;
+    cursor:pointer;
+  }
+  .ajuda-bt:hover{border-color:var(--azul); color:var(--azul); background:var(--azul-suave);}
+  .ajuda-bt[aria-expanded="true"]{background:var(--azul); border-color:var(--azul); color:var(--branco);}
+  .ajuda-caixa{
+    margin:0 0 12px;
+    padding:10px 12px;
+    background:#F7F9FC;
+    border-left:3px solid var(--azul);
+    border-radius:0 var(--raio) var(--raio) 0;
+    font-size:.86rem; color:var(--texto-2);
+  }
+  .ajuda-caixa p{margin:0;}
+  .ajuda-caixa p + p{margin-top:7px;}
+
   .barra{
     display:flex; flex-wrap:wrap; align-items:center; gap:8px;
     margin-top:10px;
@@ -452,6 +479,15 @@
   .trilho{
     height:9px; background:#E7EBF1; border-radius:5px; overflow:hidden;
   }
+  .janela.principal{
+    padding:10px 12px;
+    background:#F7F9FC;
+    border-left:3px solid var(--azul);
+    border-radius:0 var(--raio) var(--raio) 0;
+    margin-bottom:12px;
+  }
+  .janela.principal .nome{font-size:.94rem;}
+  .janela.principal .trilho{height:11px;}
   .preenche{
     height:100%; width:0;
     background:var(--azul);
@@ -595,9 +631,9 @@
 
       <section class="painel">
         <h2>Como isso ocupa a janela de contexto</h2>
-        <p class="ajuda">A barra considera apenas o que você envia. A resposta da ferramenta também ocupa espaço na mesma janela, então convém deixar folga.</p>
+        <p class="ajuda">A primeira barra é a do Gemini Pro, a ferramenta oficial do MPPR. As demais servem de referência para ferramentas externas, que costumam ter janelas bem menores.</p>
         <div id="janelas"></div>
-        <p class="nota">Tamanhos usados como referência. Confirme o limite da ferramenta que você usa, porque ele muda de modelo para modelo e de versão para versão.</p>
+        <p class="nota">O Gemini Pro trabalha com cerca de 1 milhão de tokens de entrada e devolve no máximo cerca de 64 mil tokens por resposta. Como a resposta ocupa a mesma janela, a segunda barra já desconta esse espaço. Alguns planos corporativos do Vertex AI chegam a 2 milhões. Confirme sempre o limite da versão que você usa, porque isso muda com frequência.</p>
       </section>
 
       <section class="painel">
@@ -646,11 +682,11 @@
   var CAR_POR_TOKEN = 3.7, CAR_MIN = 3.2, CAR_MAX = 4.2;
 
   var JANELAS = [
-    { nome: "8 mil tokens",   limite: 8000 },
-    { nome: "32 mil tokens",  limite: 32000 },
-    { nome: "128 mil tokens", limite: 128000 },
-    { nome: "200 mil tokens", limite: 200000 },
-    { nome: "1 milhão de tokens", limite: 1000000 }
+    { nome: "Gemini Pro: 1 milhão de tokens", limite: 1000000, principal: true },
+    { nome: "Gemini Pro, deixando espaço para a resposta (936 mil)", limite: 936000 },
+    { nome: "Ferramentas externas com janela de 200 mil", limite: 200000 },
+    { nome: "Ferramentas externas com janela de 128 mil", limite: 128000 },
+    { nome: "Modelos menores ou versões antigas (32 mil)", limite: 32000 }
   ];
 
   var elTexto     = document.getElementById("texto");
@@ -690,7 +726,7 @@
   (function montarJanelas(){
     var html = "";
     JANELAS.forEach(function(j, i){
-      html += '<div class="janela">' +
+      html += '<div class="janela' + (j.principal ? " principal" : "") + '">' +
                 '<div class="topo-linha"><span class="nome">' + j.nome + '</span>' +
                 '<span class="pct" id="pct' + i + '">0%</span></div>' +
                 '<div class="trilho"><div class="preenche" id="bar' + i + '"></div></div>' +

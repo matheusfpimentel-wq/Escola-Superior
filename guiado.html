@@ -354,6 +354,33 @@
     color:var(--cinza);
   }
 
+  /* ====== Ajuda retraída atrás de um "?" ====== */
+  .cab-painel{
+    display:flex; align-items:center; gap:8px;
+    margin:0 0 11px;
+  }
+  .cab-painel > h2{margin:0;}
+  .ajuda-bt{
+    flex:0 0 auto;
+    width:20px; height:20px; padding:0;
+    border:1px solid #C6CEDA; border-radius:50%;
+    background:var(--branco); color:var(--cinza);
+    font-family:var(--titulo); font-weight:700; font-size:.72rem; line-height:1;
+    cursor:pointer;
+  }
+  .ajuda-bt:hover{border-color:var(--azul); color:var(--azul); background:var(--azul-suave);}
+  .ajuda-bt[aria-expanded="true"]{background:var(--azul); border-color:var(--azul); color:var(--branco);}
+  .ajuda-caixa{
+    margin:0 0 12px;
+    padding:10px 12px;
+    background:#F7F9FC;
+    border-left:3px solid var(--azul);
+    border-radius:0 var(--raio) var(--raio) 0;
+    font-size:.86rem; color:var(--texto-2);
+  }
+  .ajuda-caixa p{margin:0;}
+  .ajuda-caixa p + p{margin-top:7px;}
+
   .barra{
     display:flex; flex-wrap:wrap; align-items:center; gap:8px;
     margin-top:10px;
@@ -435,24 +462,14 @@
   .tela .rotulo:first-of-type{margin-top:0;}
   .campo-outro{margin-top:7px;}
 
-  .opcoes-inicio{display:flex; flex-wrap:wrap; gap:9px; margin:0 0 20px;}
+  .opcoes-inicio{display:flex; flex-wrap:wrap; gap:9px; margin:0 0 22px;}
+  .bt-play svg{margin-right:1px;}
 
-  .predefinicoes{margin-top:2px;}
-  .grupo-predef{margin:0 0 12px;}
-  .grupo-predef:last-child{margin-bottom:0;}
-  .rotulo-predef{
-    display:block;
-    font-family:var(--titulo); font-weight:600;
-    font-size:.72rem; letter-spacing:.04em; text-transform:uppercase;
-    color:var(--cinza); margin-bottom:6px;
+  .inicio-modelo{
+    padding-top:16px;
+    border-top:1px solid var(--linha);
   }
-  .linha-predef{display:flex; flex-wrap:wrap; gap:6px;}
-  .predef{
-    border:1px solid #C6CEDA; background:var(--branco); color:var(--texto-2);
-    font-family:var(--texto); font-size:.83rem;
-    padding:7px 12px; border-radius:var(--raio); cursor:pointer; text-align:left;
-  }
-  .predef:hover{border-color:var(--azul); color:var(--azul); background:var(--azul-suave);}
+  .inicio-modelo .nota{min-height:1.2em;}
 
   .navegacao{
     display:flex; justify-content:space-between; gap:10px;
@@ -558,12 +575,24 @@
         <!-- ====== Inicio ====== -->
         <div class="tela" data-tela="inicio">
           <h2>Vamos montar o seu prompt</h2>
-          <p class="ajuda">Responda algumas perguntas curtas sobre papel, objetivo, formato e regras, e o prompt sai pronto em Markdown. Se preferir, comece de um exemplo já preenchido ou direto de um modelo em branco.</p>
+          <p class="ajuda">Responda algumas perguntas curtas sobre papel, objetivo, formato e regras, e o prompt sai pronto em Markdown.</p>
+
           <div class="opcoes-inicio">
-            <button type="button" class="bt bt-forte" id="comecarGuiado">Responder as perguntas</button>
-            <button type="button" class="bt" id="comecarBranco">Usar modelo em branco</button>
+            <button type="button" class="bt bt-forte bt-play" id="comecarGuiado">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"></path></svg>
+              Iniciar meu prompt guiado
+            </button>
+            <button type="button" class="bt" id="comecarBranco">Gerar prompt em branco</button>
           </div>
-          <div class="predefinicoes" id="predefinicoes" aria-label="Começar de um exemplo"></div>
+
+          <div class="inicio-modelo">
+            <label class="rotulo" for="modeloInicio">Iniciar a partir de modelo</label>
+            <div class="escolha">
+              <select id="modeloInicio"></select>
+              <button type="button" class="bt" id="usarModelo">Usar modelo</button>
+            </div>
+            <p class="nota" id="notaModelo"></p>
+          </div>
         </div>
 
         <!-- ====== Papel, publico e tom ====== -->
@@ -776,7 +805,8 @@
   var btContinuar = document.getElementById("btContinuar");
   var elRecado    = document.getElementById("recado");
   var elContador  = document.getElementById("contadorDiscreto");
-  var elPredef    = document.getElementById("predefinicoes");
+  var elModelo    = document.getElementById("modeloInicio");
+  var elNotaModelo= document.getElementById("notaModelo");
 
   var fPersona = document.getElementById("fPersona");
   var fPublico = document.getElementById("fPublico");
@@ -1059,29 +1089,34 @@
     mostrarTela("inicio");
   });
 
-  /* ================= Predefinicoes ================= */
+  /* ================= Modelos prontos ================= */
 
-  (function montarPredefinicoes(){
+  (function montarModelos(){
     var grupos = {}, ordem = [];
-    PRESETS.forEach(function(p){
+    PRESETS.forEach(function(p, i){
       if(!grupos[p.grupo]){ grupos[p.grupo] = []; ordem.push(p.grupo); }
-      grupos[p.grupo].push(p);
+      grupos[p.grupo].push({ p: p, i: i });
     });
     var html = "";
     ordem.forEach(function(g){
-      html += '<div class="grupo-predef"><span class="rotulo-predef">' + esc(g) + '</span><div class="linha-predef">';
-      grupos[g].forEach(function(p){
-        html += '<button type="button" class="predef" data-preset="' + PRESETS.indexOf(p) + '">' + esc(p.nome) + "</button>";
+      html += '<optgroup label="' + esc(g) + '">';
+      grupos[g].forEach(function(o){
+        html += '<option value="' + o.i + '">' + esc(o.p.nome) + "</option>";
       });
-      html += "</div></div>";
+      html += "</optgroup>";
     });
-    elPredef.innerHTML = html;
+    elModelo.innerHTML = html;
   })();
 
-  elPredef.addEventListener("click", function(ev){
-    var b = maisProximo(ev.target, ".predef");
-    if(!b) return;
-    var p = PRESETS[parseInt(b.getAttribute("data-preset"), 10)];
+  function descreverModelo(){
+    var p = PRESETS[parseInt(elModelo.value, 10)];
+    elNotaModelo.textContent = p ? (p.grupo + ": " + (p.v.objetivo || "")) : "";
+  }
+  elModelo.addEventListener("change", descreverModelo);
+  descreverModelo();
+
+  document.getElementById("usarModelo").addEventListener("click", function(){
+    var p = PRESETS[parseInt(elModelo.value, 10)];
     if(!p) return;
     aplicarPreset(p.v);
     recado('Preenchido a partir de "' + p.nome + '". Ajuste o que quiser em cada tela.');
@@ -1089,6 +1124,7 @@
   });
 
   document.getElementById("comecarGuiado").addEventListener("click", function(){
+    limparCampos();
     mostrarTela("papel");
   });
   document.getElementById("comecarBranco").addEventListener("click", function(){
@@ -1161,6 +1197,22 @@
   elVoltarTopo.addEventListener("click", function(){
     rolarTopo();
   });
+
+  /* ================= Ajuda retraída ("?") =================
+     Cada botao [data-ajuda] mostra ou esconde a caixa cujo id foi
+     informado, mantendo aria-expanded coerente para leitores de tela. */
+  (function ajudaRetraida(){
+    var botoes = document.querySelectorAll("[data-ajuda]");
+    for(var i = 0; i < botoes.length; i++){
+      botoes[i].addEventListener("click", function(){
+        var alvo = document.getElementById(this.getAttribute("data-ajuda"));
+        if(!alvo) return;
+        var aberto = !alvo.hidden;
+        alvo.hidden = aberto;
+        this.setAttribute("aria-expanded", aberto ? "false" : "true");
+      });
+    }
+  })();
 
   atualizarVisibilidadeOutros();
   mostrarTela("inicio");
