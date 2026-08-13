@@ -646,10 +646,10 @@
      glossario: "https://sites.google.com/mppr.mp.br/curso-ia/glossario",
      ========================================================== */
   var LINKS = {
-    glossario: "",
-    guiado:    "",
-    editor:    "",
-    estimador: ""
+    glossario: "https://sites.google.com/mppr.mp.br/ia-em-acao/gloss%C3%A1rio",
+    guiado:    "https://sites.google.com/mppr.mp.br/ia-em-acao/prompt-guiado",
+    editor:    "https://sites.google.com/mppr.mp.br/ia-em-acao/editor-de-markdown",
+    estimador: "https://sites.google.com/mppr.mp.br/ia-em-acao/contador-de-tokens"
   };
 
   /* ========================================================== */
@@ -692,9 +692,12 @@
       '<p class="cartao-desc">' + esc(f.desc) + "</p>";
 
     if(enderecoValido(url)){
-      /* target=_top: sem isso o Google Sites abriria o site inteiro
-         dentro do próprio quadro de incorporação. */
-      return '<a class="cartao" href="' + esc(url.trim()) + '" target="_top" rel="noopener">' +
+      /* target=_blank abre em nova aba, e e a unica opcao confiavel aqui:
+         o Google Sites incorpora a pagina num iframe com sandbox sem a
+         permissao allow-top-navigation, entao target=_top e bloqueado
+         pelo navegador e o clique nao faz nada. Abrir dentro do proprio
+         quadro (_self) carregaria o site inteiro no espaco do bloco. */
+      return '<a class="cartao" href="' + esc(url.trim()) + '" target="_blank" rel="noopener noreferrer">' +
                miolo +
                '<span class="cartao-ir">Abrir ' + SETA + "</span>" +
              "</a>";
