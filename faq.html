@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ferramentas de apoio | Escola Superior do MPPR</title>
+<title>O que pode e o que não pode | Escola Superior do MPPR</title>
 <style>
   /* ====== Tipografia institucional (Futura, embutida) ====== */
   @font-face{
@@ -426,6 +426,14 @@
   .recado.ver{opacity:1;}
 
 
+  /* ====== Controles ====== */
+  .controles-area{
+    flex:0 0 auto;
+    background:var(--branco);
+    border-bottom:1px solid var(--linha);
+    padding:13px 0 11px;
+  }
+
   /* ====== Rolagem ====== */
   .scroller{
     flex:1 1 auto;
@@ -434,120 +442,132 @@
     background:var(--fundo);
   }
 
-  /* ====== Quatro quadrantes ====== */
-  .ferramentas-grade{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin:0 0 18px;
-  }
-
-  .cartao{
-    position:relative;
-    display:flex;
-    flex-direction:column;
-    gap:9px;
-    min-height:172px;
-    padding:20px 21px;
-    border:0;
-    border-radius:14px;
-    background:linear-gradient(145deg, #46599F 0%, var(--azul) 45%, #35468A 100%);
+  /* ====== Regras de bolso ====== */
+  .bolso{
+    background:var(--navy);
     color:var(--branco);
-    text-decoration:none;
-    overflow:hidden;
-    box-shadow:0 2px 5px rgba(38,47,76,.16), 0 10px 22px rgba(38,47,76,.13);
-    transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    border-radius:var(--raio);
+    padding:15px 17px;
+    margin:0 0 16px;
   }
-  /* corte diagonal do manual, discreto, no canto do cartao */
-  .cartao::after{
-    content:"";
-    position:absolute;
-    top:0; bottom:0; right:-14%;
-    width:52%;
-    background:linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.09) 60%, rgba(255,255,255,.14) 100%);
-    transform:skewX(-19deg);
-    pointer-events:none;
-  }
-  a.cartao:hover{
-    transform:translateY(-3px);
-    filter:saturate(1.06);
-    box-shadow:0 4px 10px rgba(38,47,76,.20), 0 16px 32px rgba(38,47,76,.22);
-  }
-  a.cartao:active{transform:translateY(-1px);}
-  a.cartao:focus-visible{outline:3px solid var(--navy); outline-offset:3px;}
-
-  .cartao-icone{
-    position:relative; z-index:1;
-    width:38px; height:38px;
-    display:flex; align-items:center; justify-content:center;
-    border-radius:10px;
-    background:rgba(255,255,255,.16);
-    color:var(--branco);
-    flex:0 0 auto;
-  }
-  .cartao-nome{
-    position:relative; z-index:1;
+  .bolso h2{
+    margin:0 0 10px;
     font-family:var(--titulo); font-weight:700;
-    font-size:1.14rem; line-height:1.2;
-    color:var(--branco);
+    font-size:.78rem; letter-spacing:.06em; text-transform:uppercase;
+    color:#AEB9E4;
   }
-  .cartao-desc{
-    position:relative; z-index:1;
-    margin:0;
-    font-size:.87rem; line-height:1.5;
-    color:rgba(255,255,255,.88);
+  .bolso ol{margin:0; padding-left:19px;}
+  .bolso li{margin:0 0 7px; font-size:.93rem; line-height:1.5;}
+  .bolso li:last-child{margin-bottom:0;}
+  .bolso b{color:var(--branco);}
+
+  /* ====== Grupos ====== */
+  .grupo-faq{margin:0 0 18px;}
+  .grupo-faq > h2{
+    margin:0 0 9px;
+    font-family:var(--titulo); font-weight:700;
+    font-size:.98rem; color:var(--navy);
+    padding-bottom:5px;
+    border-bottom:2px solid var(--azul);
   }
-  .cartao-ir{
-    position:relative; z-index:1;
-    margin-top:auto; padding-top:6px;
+
+  /* ====== Item ====== */
+  .item{
+    background:var(--branco);
+    border:1px solid var(--linha);
+    border-left:3px solid var(--cinza);
+    border-radius:0 var(--raio) var(--raio) 0;
+    margin:0 0 7px;
+    overflow:hidden;
+  }
+  .item.t-pode{border-left-color:#1F7A4C;}
+  .item.t-naopode{border-left-color:#9A2C2C;}
+  .item.t-atencao{border-left-color:#C9A227;}
+  .item.t-comofunciona{border-left-color:var(--azul);}
+
+  .item-bt{
+    display:flex; align-items:flex-start; gap:10px;
+    width:100%;
+    padding:12px 14px;
+    background:transparent; border:0;
+    text-align:left; cursor:pointer;
+    font-family:var(--texto);
+  }
+  .item-bt:hover{background:#FAFBFD;}
+  .item-pergunta{
+    flex:1 1 auto;
     font-family:var(--titulo); font-weight:600;
-    font-size:.8rem; letter-spacing:.02em;
-    color:var(--branco);
-    display:flex; align-items:center; gap:6px;
+    font-size:.97rem; color:var(--navy); line-height:1.35;
   }
-  .cartao-ir svg{transition:transform .18s ease;}
-  a.cartao:hover .cartao-ir svg{transform:translateX(3px);}
-
-  .cartao-largo{
-    grid-column:1 / -1;
-    min-height:0;
-    flex-direction:row;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:8px 14px;
+  .seta{
+    flex:0 0 auto; margin-top:3px;
+    color:var(--cinza);
+    transition:transform .18s ease;
   }
-  .cartao-largo .cartao-nome{flex:0 0 auto;}
-  .cartao-largo .cartao-desc{flex:1 1 260px; min-width:0;}
-  .cartao-largo .cartao-ir{margin:0;}
+  .item-bt[aria-expanded="true"] .seta{transform:rotate(90deg);}
 
-  /* cartao sem endereco configurado: cinza, para nao parecer clicavel */
-  .cartao.sem-link{
-    background:#EEF1F6;
-    border:1px dashed #B9C3D6;
+  .selo-tipo{
+    flex:0 0 auto;
+    font-family:var(--titulo); font-weight:600;
+    font-size:.66rem; letter-spacing:.04em; text-transform:uppercase;
+    padding:3px 8px; border-radius:2px; white-space:nowrap;
+    margin-top:1px;
+  }
+  .t-pode .selo-tipo{background:#E3F1E9; color:#1F5F42;}
+  .t-naopode .selo-tipo{background:#F7E4E2; color:#8C2F26;}
+  .t-atencao .selo-tipo{background:#FBF0D4; color:#7A5E10;}
+  .t-comofunciona .selo-tipo{background:#E7EAF5; color:#2C3C7A;}
+
+  .item-corpo{
+    padding:0 14px 13px 14px;
+    border-top:1px solid #EDF0F4;
+    margin-top:-1px;
+  }
+  .item-corpo p{margin:11px 0 0; font-size:.94rem; line-height:1.6;}
+  .fonte{
+    margin:11px 0 0;
+    padding-top:9px;
+    border-top:1px dashed var(--linha);
+    font-size:.79rem; color:var(--cinza);
+  }
+  .fonte b{
+    font-family:var(--titulo); font-weight:600;
     color:var(--texto-2);
-    box-shadow:none;
+    text-transform:uppercase; letter-spacing:.04em; font-size:.72rem;
+    margin-right:4px;
   }
-  .cartao.sem-link::after{display:none;}
-  .cartao.sem-link .cartao-icone{background:#DFE5EE; color:var(--cinza);}
-  .cartao.sem-link .cartao-nome{color:var(--navy);}
-  .cartao.sem-link .cartao-desc{color:var(--texto-2);}
-  .aviso-link{
-    margin-top:auto; padding-top:6px;
-    font-family:var(--titulo); font-weight:600;
-    font-size:.76rem; color:#8A6D12;
+
+  .vazio{
+    background:var(--branco);
+    border:1px dashed var(--linha);
+    border-radius:var(--raio);
+    text-align:center; padding:36px 18px;
   }
+  .vazio h2{margin:0 0 5px; font-family:var(--titulo); font-weight:700; color:var(--navy); font-size:1.02rem;}
+  .vazio p{margin:0; color:var(--texto-2); font-size:.9rem;}
+
+  /* ====== Fontes ao final ====== */
+  .atos{
+    background:var(--branco);
+    border:1px solid var(--linha);
+    border-radius:var(--raio);
+    padding:14px 16px;
+    margin:0 0 14px;
+  }
+  .atos h2{
+    margin:0 0 9px;
+    font-family:var(--titulo); font-weight:700;
+    font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--cinza);
+  }
+  .atos ul{margin:0; padding-left:18px;}
+  .atos li{margin:0 0 6px; font-size:.88rem; line-height:1.5; color:var(--texto-2);}
+  .atos li:last-child{margin-bottom:0;}
+  .atos b{color:var(--navy);}
 
   @media (max-width:700px){
     .wrap{padding:0 16px;}
     .marca h1{font-size:1.2rem;}
-    .cartao{min-height:0; padding:17px 18px;}
-  }
-  @media (max-width:700px){
-    .cartao-largo{flex-direction:column; align-items:flex-start;}
-    .cartao-largo .cartao-desc{flex:1 1 auto;}
-  }
-  @media (max-width:560px){
-    .ferramentas-grade{grid-template-columns:1fr; gap:11px;}
   }
   @media (max-width:480px){
     .marca .wrap{padding-top:11px; padding-bottom:12px;}
@@ -555,13 +575,14 @@
     .unidade{font-size:.92rem;}
     .marca h1{font-size:1.08rem; margin-top:11px;}
     .conteudo{padding-top:14px;}
-    .cartao{padding:15px 16px;}
-    .cartao-nome{font-size:1.06rem;}
+    .chips{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding:5px 0; margin-top:6px;}
+    .chips::-webkit-scrollbar{display:none;}
+    .chip{flex:0 0 auto;}
+    .item-bt{flex-wrap:wrap;}
+    .selo-tipo{order:3;}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition-duration:.01ms !important;}
-    a.cartao:hover{transform:none;}
-    a.cartao:hover .cartao-ir svg{transform:none;}
   }
   /* ====== Rodape ====== */
   .rodape{
@@ -619,20 +640,67 @@
         <div class="divisor" aria-hidden="true"></div>
         <div class="unidade">Escola Superior</div>
       </div>
-      <h1><span class="leve">Curso de Capacitação em IA</span>Ferramentas de apoio</h1>
+      <h1><span class="leve">O que pode e</span>O que não pode</h1>
     </div>
   </header>
+
+  <div class="controles-area">
+    <div class="wrap">
+      <div class="linha-controles">
+        <div class="busca">
+          <label for="busca">Buscar nas perguntas</label>
+          <div class="campo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" aria-hidden="true" focusable="false">
+              <circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+            </svg>
+            <input id="busca" type="search" placeholder="Buscar dúvida, por exemplo: sigilo, ChatGPT, citação..." autocomplete="off" spellcheck="false">
+            <button id="limpar" type="button" aria-label="Limpar busca" hidden>&#215;</button>
+          </div>
+        </div>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filtrar por tipo de resposta"></div>
+      <div class="status">
+        <p id="contador" role="status" aria-live="polite"></p>
+        <button type="button" class="link-botao" id="limparFiltros" hidden>Limpar filtros</button>
+      </div>
+    </div>
+  </div>
 
   <div class="scroller" id="scroller">
     <div class="wrap conteudo">
 
-      <div class="ferramentas-grade" id="grade"></div>
+      <section class="bolso">
+        <h2>Em resumo</h2>
+        <ol>
+          <li>A ferramenta institucional é o <b>Gemini</b>, acessado pela <b>conta institucional</b>. É a única com garantia de não compartilhamento do que você insere.</li>
+          <li>Nunca use <b>e-mail, credencial ou telefone institucional</b> para criar conta em outra plataforma de IA.</li>
+          <li>A <b>revisão humana é obrigatória</b>, no comando e na resposta, e a <b>responsabilidade continua sua</b>: não se delega à ferramenta.</li>
+        </ol>
+      </section>
+
+      <div id="lista"></div>
+
+      <section class="atos">
+        <h2>Atos em que esta página se baseia</h2>
+        <ul>
+          <li><b>Recomendação CGMP n. 002/2025</b>, da Corregedoria-Geral do MPPR, de 20 de maio de 2025, que orienta princípios, deveres e critérios para o uso de IA generativa por membros e servidores.</li>
+          <li><b>Guia de Boas Práticas para o uso da IA Generativa (Gemini)</b>, da Subprocuradoria-Geral de Justiça para Assuntos Administrativos.</li>
+          <li><b>Resolução do CNJ sobre inteligência artificial no Poder Judiciário</b>, que revoga a Resolução CNJ n. 332/2020 e entra em vigor 120 dias após a publicação. Vale para o Judiciário e aparece aqui como parâmetro, sempre identificada.</li>
+        </ul>
+      </section>
 
       <p class="aviso">
-        O conteúdo que você levar para uma ferramenta de IA segue as regras da Resolução PGJ 6031/2026:
-        <b>dado sigiloso só na ferramenta institucional.</b>
+        Esta página resume os atos para consulta rápida e <b>não substitui a leitura do texto oficial</b>.
+        Em caso de dúvida sobre um caso concreto, consulte o ato na íntegra e a sua chefia imediata.
       </p>
 
+    </div>
+
+    <div class="topo-anchor">
+      <button type="button" id="voltarTopo">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20V5M5 12l7-7 7 7"></path></svg>
+        Voltar ao topo
+      </button>
     </div>
 
     <footer class="rodape">
@@ -649,93 +717,200 @@
 (function(){
   "use strict";
 
-  /* ==========================================================
-     ENDEREÇOS DAS PÁGINAS
-
-     Cole aqui o endereço de cada página depois de publicá-las no
-     Google Sites. Enquanto um endereço ficar em branco, o cartão
-     aparece marcado como "endereço não configurado", em vez de
-     virar um link quebrado.
-
-     Exemplo:
-     glossario: "https://sites.google.com/mppr.mp.br/curso-ia/glossario",
-     ========================================================== */
-  var LINKS = {
-    faq:       "",
-    glossario: "https://sites.google.com/mppr.mp.br/ia-em-acao/gloss%C3%A1rio",
-    guiado:    "https://sites.google.com/mppr.mp.br/ia-em-acao/prompt-guiado",
-    editor:    "https://sites.google.com/mppr.mp.br/ia-em-acao/editor-de-markdown",
-    estimador: "https://sites.google.com/mppr.mp.br/ia-em-acao/contador-de-tokens"
-  };
-
-  /* ========================================================== */
-
-  var ICONES = {
-    faq:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>',
-    glossario: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>',
-    guiado:    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><circle cx="12" cy="12" r="4"></circle><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path></svg>',
-    editor:    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg>',
-    estimador: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3v18h18"></path><rect x="7" y="12" width="3" height="6"></rect><rect x="12" y="8" width="3" height="10"></rect><rect x="17" y="4" width="3" height="14"></rect></svg>'
-  };
-
-  var SETA = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 5l7 7-7 7"></path></svg>';
-
-  /* o FAQ ocupa a faixa inteira acima dos quatro quadrantes */
-  var DESTAQUE = {
-    chave: "faq", nome: "O que pode e o que não pode",
-    desc: "As regras de uso de IA no MPPR em perguntas e respostas, cada uma com o ato e o artigo que a sustenta."
-  };
-
-  var FERRAMENTAS = [
-    { chave: "guiado",    nome: "Prompt Guiado",
-      desc: "Responda algumas perguntas sobre papel, objetivo, formato e regras, e receba o prompt pronto em Markdown." },
-    { chave: "editor",    nome: "Editor de Markdown",
-      desc: "Formata o texto que a IA devolveu cheio de asteriscos e leva para o Documentos ou o Word já formatado." },
-    { chave: "estimador", nome: "Estimador de Tokens",
-      desc: "Mede o tamanho de um texto, mostra quanto ocupa da janela de contexto e divide documentos longos em partes." },
-    { chave: "glossario", nome: "Glossário de IA",
-      desc: "Os 152 termos do curso explicados, com busca, filtro por categoria e referências cruzadas." }
+  var FAQ = [
+{"grupo": "Ferramentas institucionais", "tipo": "comofunciona", "pergunta": "Qual é a ferramenta de IA oficial do MPPR?", "resposta": "O Google Gemini. O MPPR adotou a ferramenta de IA generativa do Google por questões comerciais e tecnológicas, e ela é a única plataforma institucional. Além de se integrar aos aplicativos Google que já usamos, traz a garantia de não compartilhamento do que for inserido a partir da conta institucional.", "fonte": "Guia de Boas Práticas (SUBADM), Sobre a utilização de IA no âmbito do MPPR e Restrições"},
+{"grupo": "Ferramentas institucionais", "tipo": "naopode", "pergunta": "Posso criar conta em outra plataforma de IA com meu e-mail do MPPR?", "resposta": "Não. Sob nenhuma hipótese endereços de e-mail, credenciais de acesso e números de telefone institucionais podem ser usados para criar contas em plataformas de IA diferentes do Google Gemini. A Recomendação da Corregedoria repete a vedação.", "fonte": "Guia de Boas Práticas (SUBADM), Restrições; Recomendação CGMP 002/2025, art. 4º, VII"},
+{"grupo": "Ferramentas institucionais", "tipo": "atencao", "pergunta": "Posso usar ChatGPT, Copilot ou outra plataforma externa?", "resposta": "O Guia não proíbe de forma geral, mas recomenda fortemente cautela: a Instituição não tem garantia de manutenção de sigilo dos dados inseridos nessas plataformas, nem mesmo nas versões pagas. A garantia de sigilo existe apenas no Gemini institucional. Some-se a isso a vedação de criar conta nelas com credenciais do MPPR.", "fonte": "Guia de Boas Práticas (SUBADM), Sobre a utilização de IA e Orientações Gerais"},
+{"grupo": "Ferramentas institucionais", "tipo": "atencao", "pergunta": "E se eu contratar uma ferramenta de IA por conta própria para usar no trabalho?", "resposta": "A Recomendação pede que se use uma versão que permita controlar e desativar a coleta, o armazenamento e o uso dos dados para aprimoramento automático da própria ferramenta. E orienta máxima cautela com dados sensíveis e documentos institucionais (informação protegida por lei, dados pessoais de servidores e cidadãos, material com propriedade intelectual), com anonimização na origem ou mecanismos que garantam a proteção efetiva.", "fonte": "Recomendação CGMP 002/2025, art. 4º, V e VI"},
+{"grupo": "Dados e sigilo", "tipo": "comofunciona", "pergunta": "Onde devo trabalhar quando houver dado sensível?", "resposta": "Na ferramenta institucional, acessada pela conta institucional. A Recomendação é expressa: para garantir a segurança e o não compartilhamento das informações inseridas, especialmente dados sensíveis, deve-se utilizar a ferramenta de IA disponibilizada pela Instituição, por meio da conta institucional. Isso não afasta os deveres de sigilo e de proteção de dados da LGPD, que continuam valendo.", "fonte": "Recomendação CGMP 002/2025, art. 4º, IV, e art. 3º, IV"},
+{"grupo": "Dados e sigilo", "tipo": "atencao", "pergunta": "O que acontece se eu colar um documento institucional numa IA externa?", "resposta": "O Guia explica o risco em termos diretos: ao inserir parte ou o inteiro teor de um documento, seja uma peça, um despacho ou qualquer documento institucional, a IA aprende com aquele conteúdo. Sem as devidas proteções contratuais e tecnológicas, não há como limitar ou prever que uso a plataforma fará das interações, especialmente quanto a dados sensíveis ou sigilosos.", "fonte": "Guia de Boas Práticas (SUBADM), Sobre a utilização de IA no âmbito do MPPR"},
+{"grupo": "Dados e sigilo", "tipo": "comofunciona", "pergunta": "As minhas conversas no Gemini são monitoradas?", "resposta": "Sim. Por medida de segurança institucional, todas as interações com o Google Gemini são monitoradas e poderão ser auditadas, caso haja necessidade administrativa ou legal.", "fonte": "Guia de Boas Práticas (SUBADM), Orientações Gerais"},
+{"grupo": "Dados e sigilo", "tipo": "comofunciona", "pergunta": "Preciso cuidar das minhas credenciais de acesso?", "resposta": "Sim, é um dever expresso: utilizar as credenciais institucionais de forma adequada e segura, preservando a integridade de senhas, credenciais e acessos às plataformas de IA, para evitar compartilhamentos indevidos ou acessos não autorizados.", "fonte": "Recomendação CGMP 002/2025, art. 3º, III"},
+{"grupo": "Responsabilidade", "tipo": "naopode", "pergunta": "A IA pode decidir no meu lugar?", "resposta": "Não. A centralidade da pessoa humana exige participação e supervisão humana efetiva em todas as etapas que envolvam o uso e a revisão de resultados produzidos por IA, sendo vedada a delegação de atividades decisórias ao sistema automatizado. O controle decisório final é sempre humano.", "fonte": "Recomendação CGMP 002/2025, art. 2º, III, e art. 3º, II"},
+{"grupo": "Responsabilidade", "tipo": "comofunciona", "pergunta": "Quem responde pelo que a IA produziu?", "resposta": "O membro do Ministério Público responde diretamente pelo uso dos resultados gerados por IA, pelo conteúdo final e pelas decisões tomadas. É vedada qualquer delegação ou transferência dessa responsabilidade a terceiros ou à ferramenta utilizada.", "fonte": "Recomendação CGMP 002/2025, art. 4º, III"},
+{"grupo": "Responsabilidade", "tipo": "comofunciona", "pergunta": "A revisão do que a IA gerou é obrigatória?", "resposta": "Sim, e ela alcança os dois lados da conversa: a revisão humana criteriosa e obrigatória recai sobre os comandos (prompts) e sobre as respostas (saídas). Na revisão, cabe analisar coerência, veracidade, ausência de vieses e conformidade com critérios legais e éticos, intervindo para ajustar ou corrigir o resultado.", "fonte": "Recomendação CGMP 002/2025, art. 4º, I, e art. 3º, I e II"},
+{"grupo": "Responsabilidade", "tipo": "atencao", "pergunta": "E quando a IA cita lei, jurisprudência ou um julgado?", "resposta": "Esse é o ponto de maior atenção. A Recomendação manda empregar prompts e comandos específicos que previnam a geração de fatos, dados, jurisprudências e legislações inexistentes, justamente para reduzir alucinações. O Guia orienta observar se os documentos citados foram efetivamente proferidos pelo Poder Judiciário. Lembre-se ainda do dever funcional de indicar os fundamentos jurídicos dos pronunciamentos processuais.", "fonte": "Recomendação CGMP 002/2025, art. 4º, II, e considerandos (art. 43, III, da LONMP); Guia de Boas Práticas (SUBADM), Orientações Gerais"},
+{"grupo": "Responsabilidade", "tipo": "naopode", "pergunta": "Existe algum conteúdo que não pode sair em peça oficial?", "resposta": "Sim. A revisão obrigatória serve, entre outras finalidades, para evitar o uso em peças oficiais de textos, figuras e demais conteúdos com discriminação ou preconceito com base em raça, cor, religião, sexo, nacionalidade, idade, deficiência, estado civil, afiliação política ou orientação sexual.", "fonte": "Recomendação CGMP 002/2025, art. 4º, I"},
+{"grupo": "Responsabilidade", "tipo": "comofunciona", "pergunta": "Preciso declarar que usei IA no documento?", "resposta": "Os dois atos do MPPR examinados aqui não impõem essa declaração. O que eles exigem é revisão humana, supervisão integral e responsabilidade direta pelo resultado. No Poder Judiciário, a resolução do CNJ deixa a menção do uso de IA no corpo da decisão a critério do magistrado, com registro automático no sistema do tribunal para fins de estatística, monitoramento e eventual auditoria.", "fonte": "Recomendação CGMP 002/2025 e Guia (SUBADM), sem previsão; Resolução do CNJ sobre IA no Poder Judiciário, art. 19, § 6º"},
+{"grupo": "O que dá para fazer", "tipo": "pode", "pergunta": "Quais usos o Guia dá como exemplo seguro?", "resposta": "O Guia lista interações que não envolvem informações pessoais de nenhum tipo nem confidenciais, destinadas apenas ao público interno e cujo resultado não será usado em decisões institucionais: traduzir texto de uma fonte secundária e disponível publicamente, e conduzir pesquisas básicas de alto nível sobre um assunto não sensível.", "fonte": "Guia de Boas Práticas (SUBADM), Orientações Gerais"},
+{"grupo": "O que dá para fazer", "tipo": "comofunciona", "pergunta": "O que preciso conferir antes de usar o resultado?", "resposta": "O Guia pede três conferências: que o uso do resultado esteja conforme as orientações do próprio Guia, que o resultado seja revisado quanto à adequação institucional segundo as diretrizes do MPPR, e que os documentos citados tenham sido efetivamente proferidos pelo Poder Judiciário.", "fonte": "Guia de Boas Práticas (SUBADM), Orientações Gerais"},
+{"grupo": "O que dá para fazer", "tipo": "comofunciona", "pergunta": "Que tarefas o Judiciário classifica como de baixo risco?", "resposta": "Serve de parâmetro útil, ainda que a classificação seja do Judiciário e não do MP. São de baixo risco, entre outras: extrair informações de sistemas e documentos para classificar, agrupar, certificar, transcrever e resumir, sempre sob supervisão humana; detectar padrões decisórios e precedentes qualificados, sem substituir a avaliação humana; produzir textos de apoio para a confecção de atos, com versão final do responsável; aprimorar ou formatar atividade humana já realizada, sem alterar materialmente o resultado; transcrever áudio e vídeo com revisão final por pessoa responsável; e anonimizar documentos.", "fonte": "Resolução do CNJ sobre IA no Poder Judiciário, Anexo de Classificação de Riscos, BR1 a BR8"},
+{"grupo": "O que dá para fazer", "tipo": "comofunciona", "pergunta": "Preciso fazer capacitação para usar IA?", "resposta": "A Recomendação inclui entre os critérios a participação em capacitações, treinamentos e atualizações institucionais, para aprimorar práticas de uso responsável e seguro, e coloca o aperfeiçoamento técnico e ético contínuo entre os deveres.", "fonte": "Recomendação CGMP 002/2025, art. 4º, VIII, e art. 3º, VI"},
+{"grupo": "Parâmetros do Judiciário", "tipo": "naopode", "pergunta": "O que o CNJ veda por risco excessivo?", "resposta": "No Poder Judiciário, é vedado desenvolver e utilizar soluções que: não permitam revisão humana dos dados e dos resultados, ou gerem dependência absoluta do usuário em relação ao resultado proposto; valorem traços de personalidade, características ou comportamentos para avaliar ou prever o cometimento de crimes ou a reiteração delitiva na fundamentação de decisões; classifiquem ou ranqueiem pessoas por comportamento ou situação social para avaliar a plausibilidade de seus direitos, méritos judiciais ou testemunhos; e façam reconhecimento de emoções por biometria.", "fonte": "Resolução do CNJ sobre IA no Poder Judiciário, art. 10"},
+{"grupo": "Parâmetros do Judiciário", "tipo": "naopode", "pergunta": "Documento em segredo de justiça pode ir para uma IA externa?", "resposta": "No parâmetro do CNJ, não: é vedado usar modelos de linguagem e sistemas de IA generativa de natureza privada ou externos ao Judiciário para processar, analisar, gerar conteúdo ou apoiar decisões a partir de documentos ou dados sigilosos ou protegidos por segredo de justiça, salvo quando devidamente anonimizados na origem ou quando adotados mecanismos técnicos e procedimentais que garantam a proteção efetiva desses dados e de seus titulares.", "fonte": "Resolução do CNJ sobre IA no Poder Judiciário, art. 19, § 3º, IV"},
+{"grupo": "Parâmetros do Judiciário", "tipo": "comofunciona", "pergunta": "A resolução do CNJ vale para o Ministério Público?", "resposta": "Ela disciplina o desenvolvimento, a governança e o uso de IA no Poder Judiciário, não no Ministério Público. Para o MPPR valem a Recomendação da Corregedoria-Geral e o Guia da SUBADM. Ainda assim ela importa por dois motivos: é parâmetro do sistema de justiça sobre o que se considera risco excessivo, alto e baixo risco, e alcança o membro do MP na condição de usuário externo, categoria em que a própria resolução o enquadra ao tratar de quem interage com os sistemas de IA do Judiciário.", "fonte": "Resolução do CNJ sobre IA no Poder Judiciário, art. 1º e art. 4º, VII"},
+{"grupo": "Parâmetros do Judiciário", "tipo": "comofunciona", "pergunta": "O uso de IA pelo Judiciário é público?", "resposta": "Sim. As soluções devem ser cadastradas na plataforma Sinapses, organizadas por grau de risco, e o CNJ publica em área própria do seu site a relação das aplicações de IA desenvolvidas ou usadas pelos órgãos do Judiciário, em linguagem simples, com o grau de risco de cada uma e revisão pelo menos a cada doze meses.", "fonte": "Resolução do CNJ sobre IA no Poder Judiciário, arts. 24 e 25"}
   ];
+
+  var TIPOS = {
+    pode:         { rotulo: "Pode",          chip: "O que pode" },
+    naopode:      { rotulo: "Não pode",      chip: "O que não pode" },
+    atencao:      { rotulo: "Atenção",       chip: "Atenção" },
+    comofunciona: { rotulo: "Como funciona", chip: "Como funciona" }
+  };
+
+  var DIACRITICOS = /[\u0300-\u036f]/g;
+
+  var elBusca      = document.getElementById("busca");
+  var elLimpar     = document.getElementById("limpar");
+  var elChips      = document.getElementById("chips");
+  var elLista      = document.getElementById("lista");
+  var elContador   = document.getElementById("contador");
+  var elLimparTudo = document.getElementById("limparFiltros");
+  var elScroller   = document.getElementById("scroller");
+  var elVoltar     = document.getElementById("voltarTopo");
+
+  var reduzir = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var estado = { busca: "", tipos: [] };
 
   function esc(s){
     return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
                     .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   }
-
-  /* Aceita apenas endereços http(s) ou caminhos internos do próprio site. */
-  function enderecoValido(u){
-    return typeof u === "string" && /^(https?:\/\/|\/)\S+$/i.test(u.trim());
+  function semAcento(s){
+    return String(s).normalize("NFD").replace(DIACRITICOS, "").toLowerCase();
+  }
+  function maisProximo(alvo, seletor){
+    var n = alvo;
+    while(n && n.nodeType === 1){
+      if(n.matches && n.matches(seletor)) return n;
+      n = n.parentElement;
+    }
+    return null;
   }
 
-  function cartao(f, largo){
-    var url = LINKS[f.chave];
-    var miolo =
-      '<span class="cartao-icone">' + ICONES[f.chave] + "</span>" +
-      '<span class="cartao-nome">' + esc(f.nome) + "</span>" +
-      '<p class="cartao-desc">' + esc(f.desc) + "</p>";
-    var classe = "cartao" + (largo ? " cartao-largo" : "");
+  FAQ.forEach(function(f, i){
+    f._id = "p" + i;
+    f._busca = semAcento(f.pergunta + " " + f.resposta + " " + f.grupo + " " + f.fonte);
+  });
 
-    if(enderecoValido(url)){
-      /* target=_blank abre em nova aba, e e a unica opcao confiavel aqui:
-         o Google Sites incorpora a pagina num iframe com sandbox sem a
-         permissao allow-top-navigation, entao target=_top e bloqueado
-         pelo navegador e o clique nao faz nada. Abrir dentro do proprio
-         quadro (_self) carregaria o site inteiro no espaco do bloco. */
-      return '<a class="' + classe + '" href="' + esc(url.trim()) + '" target="_blank" rel="noopener noreferrer">' +
-               miolo +
-               '<span class="cartao-ir">Abrir ' + SETA + "</span>" +
-             "</a>";
-    }
-    return '<div class="' + classe + ' sem-link">' + miolo +
-             '<span class="aviso-link">Endereço ainda não configurado</span>' +
+  (function montarChips(){
+    var html = '<button type="button" class="chip" data-tipo="__todos" aria-pressed="true">Tudo</button>';
+    Object.keys(TIPOS).forEach(function(t){
+      html += '<button type="button" class="chip" data-tipo="' + t + '" aria-pressed="false">' + esc(TIPOS[t].chip) + "</button>";
+    });
+    elChips.innerHTML = html;
+  })();
+
+  function termos(){
+    var q = semAcento(estado.busca).trim();
+    return q ? q.split(/\s+/).filter(Boolean) : [];
+  }
+
+  function visiveis(){
+    var ts = termos();
+    return FAQ.filter(function(f){
+      if(estado.tipos.length && estado.tipos.indexOf(f.tipo) === -1) return false;
+      for(var i = 0; i < ts.length; i++){
+        if(f._busca.indexOf(ts[i]) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function htmlItem(f){
+    return '<div class="item t-' + f.tipo + '">' +
+             '<button type="button" class="item-bt" aria-expanded="false" aria-controls="' + f._id + '">' +
+               '<svg class="seta" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18l6-6-6-6"></path></svg>' +
+               '<span class="item-pergunta">' + esc(f.pergunta) + "</span>" +
+               '<span class="selo-tipo">' + esc(TIPOS[f.tipo].rotulo) + "</span>" +
+             "</button>" +
+             '<div class="item-corpo" id="' + f._id + '" hidden>' +
+               "<p>" + esc(f.resposta) + "</p>" +
+               '<p class="fonte"><b>Fonte</b>' + esc(f.fonte) + "</p>" +
+             "</div>" +
            "</div>";
   }
 
-  var html = cartao(DESTAQUE, true) + FERRAMENTAS.map(function(f){
-    return cartao(f, false);
-  }).join("");
+  function renderizar(){
+    var lista = visiveis(), html = "", grupos = [], porGrupo = {};
 
-  document.getElementById("grade").innerHTML = html;
+    lista.forEach(function(f){
+      if(!porGrupo[f.grupo]){ porGrupo[f.grupo] = []; grupos.push(f.grupo); }
+      porGrupo[f.grupo].push(f);
+    });
+
+    if(!lista.length){
+      html = '<div class="vazio"><h2>Nenhuma pergunta encontrada</h2>' +
+             "<p>Tente outra palavra ou limpe os filtros.</p></div>";
+    } else {
+      grupos.forEach(function(g){
+        html += '<section class="grupo-faq"><h2>' + esc(g) + "</h2>";
+        porGrupo[g].forEach(function(f){ html += htmlItem(f); });
+        html += "</section>";
+      });
+    }
+    elLista.innerHTML = html;
+
+    elContador.innerHTML = "Mostrando <b>" + lista.length + "</b> de <b>" + FAQ.length + "</b> perguntas";
+    var temFiltro = !!estado.busca || estado.tipos.length > 0;
+    elLimparTudo.hidden = !temFiltro;
+    elLimpar.hidden = !estado.busca;
+  }
+
+  /* abre e fecha cada pergunta */
+  elLista.addEventListener("click", function(ev){
+    var b = maisProximo(ev.target, ".item-bt");
+    if(!b) return;
+    var corpo = document.getElementById(b.getAttribute("aria-controls"));
+    if(!corpo) return;
+    var aberto = !corpo.hidden;
+    corpo.hidden = aberto;
+    b.setAttribute("aria-expanded", aberto ? "false" : "true");
+  });
+
+  function atualizarChips(){
+    var chips = elChips.querySelectorAll(".chip");
+    for(var i = 0; i < chips.length; i++){
+      var t = chips[i].getAttribute("data-tipo");
+      var ativo = (t === "__todos") ? estado.tipos.length === 0 : estado.tipos.indexOf(t) > -1;
+      chips[i].setAttribute("aria-pressed", ativo ? "true" : "false");
+    }
+  }
+
+  elChips.addEventListener("click", function(ev){
+    var b = maisProximo(ev.target, ".chip");
+    if(!b) return;
+    var t = b.getAttribute("data-tipo");
+    if(t === "__todos"){ estado.tipos = []; }
+    else {
+      var i = estado.tipos.indexOf(t);
+      if(i > -1) estado.tipos.splice(i, 1); else estado.tipos.push(t);
+    }
+    atualizarChips(); renderizar(); elScroller.scrollTop = 0;
+  });
+
+  elBusca.addEventListener("input", function(){
+    estado.busca = elBusca.value;
+    renderizar(); elScroller.scrollTop = 0;
+  });
+  elBusca.addEventListener("keydown", function(ev){
+    if(ev.key === "Escape" && elBusca.value){
+      ev.preventDefault();
+      elBusca.value = ""; estado.busca = ""; renderizar();
+    }
+  });
+  elLimpar.addEventListener("click", function(){
+    elBusca.value = ""; estado.busca = ""; renderizar(); elBusca.focus();
+  });
+  elLimparTudo.addEventListener("click", function(){
+    elBusca.value = ""; estado.busca = ""; estado.tipos = [];
+    atualizarChips(); renderizar(); elScroller.scrollTop = 0; elBusca.focus();
+  });
+
+  elScroller.addEventListener("scroll", function(){
+    if(elScroller.scrollTop > 240) elVoltar.classList.add("visivel");
+    else elVoltar.classList.remove("visivel");
+  });
+  elVoltar.addEventListener("click", function(){
+    if(elScroller.scrollTo){
+      try{ elScroller.scrollTo({ top: 0, behavior: reduzir ? "auto" : "smooth" }); return; }catch(e){}
+    }
+    elScroller.scrollTop = 0;
+  });
+
+  atualizarChips();
+  renderizar();
 })();
 </script>
 </body>
