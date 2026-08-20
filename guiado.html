@@ -26,6 +26,7 @@
     /* Cores oficiais do Manual de Identidade Visual do MPPR */
     --azul:#3E519B;          /* azul institucional */
     --cinza:#828586;         /* cinza institucional */
+    --cinza-texto:#6b6f73;   /* mesmo cinza, escurecido para texto (4,5:1) */
     --navy:#262F4C;          /* fundo azul escuro do site institucional */
     --navy-claro:#2F3A5E;
     --azul-suave:#EAEDF7;
@@ -200,7 +201,7 @@
   #busca::-webkit-search-cancel-button,#busca::-webkit-search-decoration{-webkit-appearance:none;appearance:none;}
   #limpar{
     flex:0 0 auto; border:0; background:transparent;
-    color:var(--cinza); font-size:1.15rem; line-height:1;
+    color:var(--cinza-texto); font-size:1.15rem; line-height:1;
     width:26px;height:26px;border-radius:50%;cursor:pointer;
   }
   #limpar:hover{background:var(--fundo); color:var(--navy);}
@@ -281,7 +282,7 @@
     display:block;
     font-family:var(--titulo); font-weight:600;
     font-size:.76rem; letter-spacing:.04em; text-transform:uppercase;
-    color:var(--cinza); margin-bottom:5px;
+    color:var(--cinza-texto); margin-bottom:5px;
   }
 
   textarea{
@@ -351,7 +352,7 @@
   .contador-discreto{
     margin:8px 0 0;
     font-size:.76rem;
-    color:var(--cinza);
+    color:var(--cinza-texto);
   }
 
   /* ====== Ajuda retraída atrás de um "?" ====== */
@@ -362,9 +363,9 @@
   .cab-painel > h2{margin:0;}
   .ajuda-bt{
     flex:0 0 auto;
-    width:20px; height:20px; padding:0;
+    width:24px; height:24px; padding:0;
     border:1px solid #C6CEDA; border-radius:50%;
-    background:var(--branco); color:var(--cinza);
+    background:var(--branco); color:var(--cinza-texto);
     font-family:var(--titulo); font-weight:700; font-size:.72rem; line-height:1;
     cursor:pointer;
   }
@@ -396,7 +397,7 @@
   .bt:hover{border-color:var(--azul); color:var(--azul);}
   .bt-forte{background:var(--azul); border-color:var(--azul); color:var(--branco);}
   .bt-forte:hover{background:var(--navy); border-color:var(--navy); color:var(--branco);}
-  .bt-fantasma{border-color:transparent; color:var(--cinza);}
+  .bt-fantasma{border-color:transparent; color:var(--cinza-texto);}
   .bt-fantasma:hover{border-color:#C6CEDA; color:var(--navy);}
   .bt[disabled]{opacity:.45; cursor:default;}
   .bt[disabled]:hover{border-color:#C6CEDA; color:var(--texto-2);}
@@ -415,7 +416,7 @@
 
   .nota{
     margin:9px 0 0;
-    font-size:.8rem; color:var(--cinza); line-height:1.5;
+    font-size:.8rem; color:var(--cinza-texto); line-height:1.5;
   }
 
   .recado{
@@ -446,7 +447,7 @@
   .progresso-rotulo{
     font-family:var(--titulo); font-weight:600;
     font-size:.76rem; letter-spacing:.03em; text-transform:uppercase;
-    color:var(--cinza);
+    color:var(--cinza-texto);
   }
   .trilho-progresso{height:5px; background:#E7EBF1; border-radius:3px; overflow:hidden;}
   .preenche-progresso{height:100%; width:0; background:var(--azul); border-radius:3px; transition:width .25s ease;}

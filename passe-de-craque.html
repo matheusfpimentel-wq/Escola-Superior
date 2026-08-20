@@ -394,7 +394,7 @@
     transition: gap 0.2s ease;
   }
   .cc-golaco .cartao-cta { background: var(--neon); color: var(--ink); }
-  .cc-passe  .cartao-cta { background: var(--orange); color: #fff; }
+  .cc-passe  .cartao-cta { background: var(--orange); color: var(--ink); }
   .cartao-cta svg {
     width: 15px; height: 15px; fill: none; stroke: currentColor;
     stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;
@@ -1157,7 +1157,7 @@
     var kpis = [
       { n: num(c.total),          r: "votos <b>registrados</b>" },
       { n: c.inscritos,           r: "<b>projetos</b> na disputa" },
-      { n: c.ultimoDia.pct + "%", r: "da torcida votou no <b>último dia</b>" }
+      { n: pct(c.ultimoDia.pct), r: "da torcida votou no <b>último dia</b>" }
     ].map(function(k){
       return '<div class="kpi"><div class="kpi-num">' + k.n + '</div>' +
              '<div class="kpi-rot">' + k.r + '</div></div>';
